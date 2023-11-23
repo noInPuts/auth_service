@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowCredentials = "true")
 @RestController
 public class UserController {
 
@@ -60,6 +60,7 @@ public class UserController {
         Cookie cookie = new Cookie("jwt-token", jwtToken);
         //cookie.setHttpOnly(true);
         cookie.setMaxAge(2 * 24 * 60 * 60);
+        cookie.setPath("/");
 
         servletResponse.addCookie(cookie);
 
@@ -90,8 +91,9 @@ public class UserController {
 
         // cookie expires in 2 days
         cookie.setMaxAge(2 * 24 * 60 * 60);
-        cookie.setSecure(true);
+        cookie.setPath("/");
         // TODO: Set TLS/SSL certificate
+        //cookie.setSecure(true);
         //cookie.setHttpOnly(true);
         servletResponse.addCookie(cookie);
 
@@ -114,6 +116,7 @@ public class UserController {
 
         Cookie deleteCookie = new Cookie("jwt-token", null);
         deleteCookie.setMaxAge(0);
+        deleteCookie.setPath("/");
 
         servletResponse.addCookie(deleteCookie);
         return new ResponseEntity<>(HttpStatus.OK);
