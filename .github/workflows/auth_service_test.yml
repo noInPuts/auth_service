@@ -1,0 +1,23 @@
+name: Auth service test
+
+on:
+  pull_request: 
+    branches:
+      - '*'
+jobs:
+  build:
+
+    runs-on: ubuntu-22.04 
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: '17'  
+
+    - name: Running tests   
+      run: mvn clean test -q
+
