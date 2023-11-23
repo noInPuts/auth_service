@@ -58,13 +58,10 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         response.put("user", userDTO);
         Cookie cookie = new Cookie("jwt-token", jwtToken);
-        cookie.setHttpOnly(true);
+        //cookie.setHttpOnly(true);
         cookie.setMaxAge(2 * 24 * 60 * 60);
 
         servletResponse.addCookie(cookie);
-
-
-        response.put("jwtToken", jwtToken);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -94,7 +91,8 @@ public class UserController {
         // cookie expires in 2 days
         cookie.setMaxAge(2 * 24 * 60 * 60);
         cookie.setSecure(true);
-        cookie.setHttpOnly(true);
+        // TODO: Set TLS/SSL certificate
+        //cookie.setHttpOnly(true);
         servletResponse.addCookie(cookie);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
