@@ -27,11 +27,14 @@ public class RestaurantEmployeeServiceImpl implements RestaurantEmployeeService 
     }
 
     public RestaurantEmployeeDTO login(String username, String password) throws UserDoesNotExistException, WrongCredentialsException {
+        // Getting the restaurant employee from the database
         Optional<RestaurantEmployee> restaurantEmployeeOptional = restaurantEmployeeRepository.findByUsername(username);
 
+        // If the restaurant employee exists, check if the password matches
         if(restaurantEmployeeOptional.isPresent()) {
             RestaurantEmployee restaurantEmployee = restaurantEmployeeOptional.get();
 
+            // If the password matches, return the restaurant employee else throw an exception
             if(!argon2PasswordEncoder.matches(password, restaurantEmployee.getPassword())) {
                 throw new WrongCredentialsException("Wrong password");
             }

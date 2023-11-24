@@ -29,28 +29,31 @@ public class AdminController {
         this.jwtService = jwtService;
     }
 
+    // Endpoint for logging in to an admin account
     @PostMapping(value = "/admin/login", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody AdminDTO postAdminDTO, HttpServletResponse servletResponse) throws UserDoesNotExistException {
+    public ResponseEntity<AdminDTO> login(@Valid @RequestBody AdminDTO postAdminDTO, HttpServletResponse servletResponse) {
+
+        // Gets admin account, if it doesn't exist or the password is wrong, return 401
         AdminDTO adminUser;
         try {
             adminUser = adminService.login(postAdminDTO);
         } catch (WrongCredentialsException | UserDoesNotExistException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
+        // Creates a JWT token and adds it to a cookie
         String JwtToken = jwtService.tokenGenerator(adminUser.getId(), adminUser.getUsername(), "admin");
-
-        // TODO: Remove map
-        Map<String, Object> response = new HashMap<>();
-        response.put("user", adminUser);
-
         Cookie cookie = new Cookie("jwt-token", JwtToken);
-        cookie.setHttpOnly(true);
+
+        // TODO: Enable when HTTPS is enabled
+        //cookie.setHttpOnly(true);
+        //cookie.setSecure(true);
 
         // Cookie is set to expire in 24 hours
         cookie.setMaxAge(24 * 60 * 60);
         servletResponse.addCookie(cookie);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(adminUser, HttpStatus.OK);
     }
 }

@@ -12,8 +12,4 @@ import org.springframework.test.annotation.DirtiesContext;
 @CucumberContextConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CucumberIntegrationTest {
-
-    @MockBean
-    private RabbitMessagePublisher rabbitMessagePublisher;
-
 }

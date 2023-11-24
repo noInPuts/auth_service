@@ -33,24 +33,28 @@ public class UserServiceTests {
 
     @Test
     public void createUserShouldReturnWithID() throws UserAlreadyExistsException, WeakPasswordException {
+        // Mocking the userRepository
         User user = new User("test_user", "password");
         user.setId(1);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
+        // Calling the createUser method with the userDTO
         UserDTO userDTO = new UserDTO("test_user", "Password1!");
         UserDTO createdUserDTO = userService.createUser(userDTO);
 
+        // Asserting that the createdUserDTO is not null and that the username and id is correct
         assertEquals(createdUserDTO.getUsername(), userDTO.getUsername());
         assertEquals(createdUserDTO.getId(), 1);
     }
 
     @Test
     public void createUserShouldThrowExceptionWhenUserAlreadyExist() {
+        // Mocking the userRepository
         User user = new User("user", "Password1!");
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
-        UserDTO userDTO = new UserDTO("test_user", "Password1!");
 
-        assertThrows(UserAlreadyExistsException.class, () -> userService.createUser(userDTO));
+        // Assert that the createUser method throws UserAlreadyExistsException when the user already exists
+        assertThrows(UserAlreadyExistsException.class, () -> userService.createUser(new UserDTO("test_user", "Password1!")));
     }
 
     @Test
@@ -58,32 +62,39 @@ public class UserServiceTests {
         // Create userDTO with weak password
         UserDTO userDTO = new UserDTO("test_user", "weak");
 
+        // Assert that the createUser method throws WeakPasswordException when the password is to weak
         assertThrows(WeakPasswordException.class, () -> userService.createUser(userDTO));
     }
 
     @Test
     public void loginShouldReturnUserWithID() throws WrongCredentialsException, UserDoesNotExistException {
+        // Mocking the userRepository
         User userEntity = new User("test_user", argon2PasswordEncoder.encode("Password1!"));
         userEntity.setId(1);
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userEntity));
 
+        // Calling the login method with the userDTO
         UserDTO user = userService.login(new UserDTO("test_user", "Password1!"));
 
+        // Asserting that the user is not null and that the username and id is correct
         assertEquals(1, user.getId());
     }
 
     @Test
     public void loginShouldThrowExceptionWhenUserDoNotExists() {
+        // Mocking the userRepository
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
+        // Asserting that the login method throws an UserDoesNotExistException when the user does not exists
         assertThrows(UserDoesNotExistException.class, () -> userService.login(new UserDTO("test_user", "Password1!")));
     }
 
     @Test
     public void loginShouldThrowExceptionWhenPasswordIsWrong() {
+        // Mocking the userRepository
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(new User("test_user", argon2PasswordEncoder.encode("Password1!"))));
 
+        // Asserting that the login method throws an WrongCredentialsException when the password is wrong
         assertThrows(WrongCredentialsException.class, () -> userService.login(new UserDTO("test_user", "Password2!")));
-
     }
 }

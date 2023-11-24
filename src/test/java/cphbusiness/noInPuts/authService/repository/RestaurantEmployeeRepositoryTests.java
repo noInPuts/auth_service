@@ -34,6 +34,7 @@ public class RestaurantEmployeeRepositoryTests {
         // Getting the restaurant employee object from the DB by the restaurant id
         List<RestaurantEmployee> restaurantEmployees = restaurantEmployeeRepository.findAllByRestaurantId(restaurantEntity.getId());
 
+        // Asserting that the restaurant employee object is not null and that the username is correct
         assertNotNull(restaurantEmployeeEntity);
         assertEquals(restaurantEmployeeEntity.getUsername(), restaurantEmployees.get(0).getUsername());
     }
@@ -49,6 +50,7 @@ public class RestaurantEmployeeRepositoryTests {
         // Getting the restaurant employee object from the DB by the restaurant employee id
         Optional<RestaurantEmployee> restaurantEmployee = restaurantEmployeeRepository.findById(restaurantEmployeeEntity.getId());
 
+        // Asserting that the restaurant employee object is present and that the username is correct
         assertTrue(restaurantEmployee.isPresent());
         assertEquals(restaurantEmployeeEntity.getUsername(), restaurantEmployee.get().getUsername());
     }
@@ -64,6 +66,7 @@ public class RestaurantEmployeeRepositoryTests {
         // Getting the restaurant employee object from the DB by the restaurant employee username
         Optional<RestaurantEmployee> restaurantEmployee = restaurantEmployeeRepository.findByUsername(restaurantEmployeeEntity.getUsername());
 
+        // Asserting that the restaurant employee object is present and that the username is correct
         assertTrue(restaurantEmployee.isPresent());
         assertEquals(restaurantEmployeeEntity.getUsername(), restaurantEmployee.get().getUsername());
     }

@@ -5,6 +5,7 @@ import cphbusiness.noInPuts.authService.model.RestaurantEmployee;
 import cphbusiness.noInPuts.authService.repository.RestaurantEmployeeRepository;
 import cphbusiness.noInPuts.authService.repository.RestaurantRepository;
 import net.datafaker.Faker;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,42 +34,42 @@ public class RestaurantEmployeeControllerIntegrationTests {
 
     private final Argon2PasswordEncoder argon2PasswordEncoder = new Argon2PasswordEncoder(16, 32, 1, 128 * 1024, 5);
 
-
-    @Test
-    public void loginShouldReturnWithID() throws Exception {
+    @BeforeEach
+    public void setUp() {
+        // Creating a restaurant and employee and saving it to the database
         Faker faker = new Faker();
         Restaurant restaurant = new Restaurant(faker.restaurant().name());
         Restaurant restaurantEntity = restaurantRepository.save(restaurant);
         RestaurantEmployee restaurantEmployee = new RestaurantEmployee("employee_user", argon2PasswordEncoder.encode("Password1!"), restaurantEntity);
         restaurantEmployeeRepository.save(restaurantEmployee);
+    }
 
+    @Test
+    public void loginShouldReturnWithID() throws Exception {
+        // Sending a post request to the login endpoint with the employee user credentials
         this.mockMvc.perform(post("/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json("{\"user\": { \"id\":1,\"username\":\"employee_user\", \"password\": null}}"))
+                .andExpect(content().json("{ \"id\":1,\"username\":\"employee_user\", \"password\": null}"))
                 .andExpect(cookie().exists("jwt-token"));
     }
 
     @Test
     public void loginShouldReturnBadRequestWhenUsernameIsBlank() throws Exception {
+        // Sending a post request to the login endpoint with a blank username
         this.mockMvc.perform(post("/restaurantEmployee/login").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void loginShouldReturnUnsupportedMediaTypeWhenNotParsingJson() throws Exception {
+        // Sending a post request to the login endpoint with wrong content type
         this.mockMvc.perform(post("/restaurantEmployee/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
     }
 
     @Test
     public void loginShouldReturnBadRequestWhenCredentialsAreWrong() throws Exception {
-        Faker faker = new Faker();
-        Restaurant restaurant = new Restaurant(faker.restaurant().name());
-        Restaurant restaurantEntity = restaurantRepository.save(restaurant);
-        RestaurantEmployee restaurantEmployee = new RestaurantEmployee("employee_user", argon2PasswordEncoder.encode("Password1!"), restaurantEntity);
-        restaurantEmployeeRepository.save(restaurantEmployee);
-
         this.mockMvc.perform(post("/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password2!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }

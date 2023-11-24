@@ -28,8 +28,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     public String tokenGenerator(Long id, String username, String role) {
+        // Generate a secret key from the pKey
         SecretKey key = Keys.hmacShaKeyFor(pKey.getBytes());
 
+        // Generate a jwt token with the secret key
         return Jwts.builder()
                 .header()
                 .add("id", id)
@@ -44,8 +46,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     public void logout(String jwtToken) throws AlreadyLoggedOutException {
+        // Check if the jwt token is already blacklisted
         Optional<Jwt> jwt = jwtRepository.findById(jwtToken);
 
+        // If the jwt token is already blacklisted, throw an exception, else blacklist the token
         if(jwt.isPresent()) {
             throw new AlreadyLoggedOutException("User is already logged out");
         } else {

@@ -44,14 +44,21 @@ public class UserServiceImpl implements UserService {
             throw new WeakPasswordException("Password is not strong enough");
         }
 
+        // Save the user to the database
         User user = userRepository.save(new User(userDTO.getUsername(), argon2PasswordEncoder.encode(userDTO.getPassword())));
 
         return new UserDTO(user.getId(), user.getUsername());
     }
 
     public UserDTO login(UserDTO userDTO) throws WrongCredentialsException, UserDoesNotExistException {
+
+        // Check if user exists
         Optional<User> user = userRepository.findByUsername(userDTO.getUsername());
+
+        // If the user exists, check if the password matches
         if (user.isPresent()) {
+
+            // If the password matches, return the user, else throw an exception
             if (argon2PasswordEncoder.matches(userDTO.getPassword(), user.get().getPassword())) {
                 userDTO.setPassword(null);
                 userDTO.setId(user.get().getId());

@@ -29,33 +29,39 @@ public class AdminControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnWithID() throws Exception {
+        // Creating an admin user and saving it to the database
         Admin adminUser = new Admin("admin", argon2PasswordEncoder.encode("Password1!"));
         adminRepository.save(adminUser);
 
+        // Sending a post request to the login endpoint with the admin user credentials
         this.mockMvc.perform(post("/admin/login").content("{ \"username\": \"admin\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json("{\"user\": { \"id\":1,\"username\":\"admin\"}}"))
+                .andExpect(content().json("{\"id\":1,\"username\":\"admin\", \"password\":null}"))
                 .andExpect(cookie().exists("jwt-token"));
     }
 
     @Test
     public void loginShouldReturnBadRequestWhenUsernameIsBlank() throws Exception {
+        // Sending a post request to the login endpoint with a blank username
         this.mockMvc.perform(post("/admin/login").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void loginShouldReturnUnsupportedMediaTypeWhenNotParsingJson() throws Exception {
+        // Sending a post request to the login endpoint with wrong content type
         this.mockMvc.perform(post("/admin/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
     }
 
     @Test
     public void loginShouldReturnBadRequestWhenCredentialsAreWrong() throws Exception {
+        // Creating an admin user and saving it to the database
         Admin adminUser = new Admin("admin", argon2PasswordEncoder.encode("Password1!"));
         adminRepository.save(adminUser);
 
+        // Sending a post request to the login endpoint with the wrong password
         this.mockMvc.perform(post("/admin/login").content("{ \"username\": \"\", \"password\": \"Password2!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
