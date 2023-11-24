@@ -34,12 +34,12 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     // TODO: Swagger documentation
     // TODO: Spam check
-    public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
 
-        // Catch exception if user already exists else create entity in DB
+        // Create user account, returns 409 if user already exists or 400 if password is weak
         UserDTO userDTO;
         try {
-            // Get user from DB
+            // Creates user and returns userDTO
             userDTO = userService.createUser(POSTuserDTO);
         } catch (UserAlreadyExistsException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -47,20 +47,16 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        // Creates response entity with userDTO
-        // TODO Remove hashmap and just return userDTO
-        Map<String, Object> response = new HashMap<>();
-        response.put("user", userDTO);
-
+        // Sets JWT token cookie
         servletResponse.addCookie(getJwtCookie(userDTO.getId(), userDTO.getUsername()));
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
     // Endpoint for logging in to a user account
     @PostMapping(value = "/user/login", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
+    public ResponseEntity<UserDTO> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
 
         // Check for correct credentials
         UserDTO userDTO;
@@ -70,14 +66,10 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        // Creates response entity with userDTO
-        // TODO Remove hashmap and just return userDTO
-        Map<String, Object> response = new HashMap<>();
-        response.put("user", userDTO);
-
+        // Sets JWT token cookie
         servletResponse.addCookie(getJwtCookie(userDTO.getId(), userDTO.getUsername()));
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @PostMapping(value = "/user/logout")
@@ -89,7 +81,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        // Try to logout user
+        // Logging user out with jwtService
         try {
             jwtService.logout(jwtToken);
         } catch (AlreadyLoggedOutException e) {

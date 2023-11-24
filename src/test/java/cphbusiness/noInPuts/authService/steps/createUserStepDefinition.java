@@ -23,8 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class createUserStepDefinition extends CucumberIntegrationTest {
 
-    // TODO: More tests
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -39,8 +37,10 @@ public class createUserStepDefinition extends CucumberIntegrationTest {
 
     @When("I make a POST request to {string} with the following body:")
     public void i_make_a_post_request_to_with_the_following_body_parameters(String endpoint, DataTable dataTable) throws Exception {
+        // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
+        // Making a POST request to the createUser endpoint with the user credentials
         this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") + "\"}").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isCreated());
 
@@ -48,8 +48,10 @@ public class createUserStepDefinition extends CucumberIntegrationTest {
 
     @Then("a user is created in the database with the following properties:")
     public void a_user_is_created_in_the_database_with_the_following_properties(io.cucumber.datatable.DataTable dataTable) {
+        // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
+        // Asserting that the user is created in the database with the correct properties
         Optional<User> userOptional = userRepository.findByUsername(dataList.get(0).get("username"));
         assertTrue(userOptional.isPresent());
 
@@ -64,16 +66,20 @@ public class createUserStepDefinition extends CucumberIntegrationTest {
 
     @When("I make a request to {string} with the following body:")
     public void i_make_a_request_to_with_the_following_body(String endpoint, DataTable dataTable) throws Exception {
+        // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
+        // Making a POST request to the createUser endpoint with the user credentials
         result = this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") + "\"}").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andReturn();
     }
 
     @Then("A user is not created in the database with the following properties:")
     public void a_user_is_not_created_in_the_database_with_the_following_properties(io.cucumber.datatable.DataTable dataTable) {
+        // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
+        // Asserting that the user is not created in the database
         Optional<User> userOptional = userRepository.findByUsername(dataList.get(0).get("username"));
         assertTrue(userOptional.isEmpty());
         assertEquals(400, result.getResponse().getStatus());

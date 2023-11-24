@@ -30,10 +30,13 @@ public class AdminServiceTests {
 
     @Test
     public void loginShouldReturnAdmin() throws UserDoesNotExistException, WrongCredentialsException {
+        // Mocking the adminRepository
         when(adminRepository.findByUsername(any(String.class))).thenReturn(Optional.of(new Admin(1L, "admin", argon2PasswordEncoder.encode("Password1!"))));
 
+        // Calling the login method with the admin user credentials
         AdminDTO adminUser = adminService.login(new AdminDTO("admin", "Password1!"));
 
+        // Asserting that the admin user is not null and that the username and id is correct
         assertEquals("admin", adminUser.getUsername());
         assertEquals(1, adminUser.getId());
         assertNull(adminUser.getPassword());
@@ -42,27 +45,34 @@ public class AdminServiceTests {
 
     @Test
     public void loginShouldReturnUserWithID() throws WrongCredentialsException, UserDoesNotExistException {
+        // Mocking the adminRepository
         Admin adminEntity = new Admin(1L, "admin", argon2PasswordEncoder.encode("Password1!"));
         when(adminRepository.findByUsername(any(String.class))).thenReturn(Optional.of(adminEntity));
 
+        // Calling the login method with the admin user credentials
         AdminDTO adminUser = adminService.login(new AdminDTO("admin", "Password1!"));
 
+        // Asserting that the admin user is not null and that the username and id is correct
         assertEquals(1, adminUser.getId());
         assertEquals("admin", adminUser.getUsername());
     }
 
     @Test
     public void loginShouldThrowExceptionWhenUserDoNotExists() {
+        // Mocking the adminRepository
         when(adminRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
+        // Asserting that the login method throws an UserDoesNotExistException when the user does not exists
         assertThrows(UserDoesNotExistException.class, () -> adminService.login(new AdminDTO("test_user", "Password1!")));
     }
 
     @Test
     public void loginShouldThrowExceptionWhenPasswordIsWrong() {
+        // Mocking the adminRepository
         Admin adminEntity = new Admin(1L, "admin", argon2PasswordEncoder.encode("Password1!"));
         when(adminRepository.findByUsername(any(String.class))).thenReturn(Optional.of(adminEntity));
 
+        // Asserting that the login method throws an WrongCredentialsException when the password is wrong
         assertThrows(WrongCredentialsException.class, () -> adminService.login(new AdminDTO("admin", "Password2!")));
 
     }
