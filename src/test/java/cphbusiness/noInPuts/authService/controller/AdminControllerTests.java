@@ -41,7 +41,7 @@ public class AdminControllerTests {
         when(jwtService.tokenGenerator(any(Long.class), any(String.class), any(String.class))).thenReturn("jwtToken");
 
         // Sending a post request to the login endpoint with the admin user credentials
-        this.mockMvc.perform(post("/admin/login").content("{ \"username\": \"admin\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/admin/login").content("{ \"username\": \"admin\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{\"id\":1,\"username\":\"admin\", \"password\":null}"))
@@ -55,7 +55,7 @@ public class AdminControllerTests {
         when(jwtService.tokenGenerator(any(Long.class), any(String.class), eq("user"))).thenReturn("dummyToken");
 
         // Sending a post request to the login endpoint with the wrong admin user credentials
-        this.mockMvc.perform(post("/admin/login").content("{ \"username\": \"admin\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/admin/login").content("{ \"username\": \"admin\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -66,7 +66,7 @@ public class AdminControllerTests {
         when(jwtService.tokenGenerator(any(Long.class), any(String.class), eq("user"))).thenReturn("dummyToken");
 
         // Sending a post request to the login endpoint with wrong username
-        this.mockMvc.perform(post("/admin/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/admin/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -76,7 +76,7 @@ public class AdminControllerTests {
         mockAdminServiceAndJwtService();
 
         // Sending a post request to the login endpoint with missing entry
-        this.mockMvc.perform(post("/admin/login").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/admin/login").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -86,7 +86,7 @@ public class AdminControllerTests {
         mockAdminServiceAndJwtService();
 
         // Sending a post request to the login endpoint with wrong content type
-        this.mockMvc.perform(post("/admin/login").content("not json").characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/admin/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
     }
 

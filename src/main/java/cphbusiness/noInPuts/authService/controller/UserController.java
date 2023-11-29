@@ -30,7 +30,7 @@ public class UserController {
     }
 
     // Endpoint for creating a user account
-    @PostMapping(value = "/user/create", produces = "application/json", consumes = "application/json")
+    @PostMapping(value = "/api/user/create", produces = "application/json", consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     // TODO: Swagger documentation
     // TODO: Spam check
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     // Endpoint for logging in to a user account
-    @PostMapping(value = "/user/login", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/api/user/login", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<UserDTO> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
 
@@ -72,7 +72,7 @@ public class UserController {
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/user/logout")
+    @PostMapping(value = "/api/user/logout")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> logout(@Valid @CookieValue("jwt-token") String jwtToken, HttpServletResponse servletResponse) {
 
@@ -103,10 +103,8 @@ public class UserController {
         Cookie cookie = new Cookie("jwt-token", jwtToken);
         cookie.setMaxAge(2 * 24 * 60 * 60);
         cookie.setPath("/");
-
-        // TODO: Set TLS/SSL certificate
-        //cookie.setSecure(true);
-        //cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
 
         return cookie;
     }

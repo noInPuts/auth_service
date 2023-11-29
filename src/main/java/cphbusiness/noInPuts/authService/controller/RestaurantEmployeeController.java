@@ -31,7 +31,7 @@ public class RestaurantEmployeeController {
     }
 
     // Endpoint for logging in to a restaurant employee account
-    @PostMapping(value = "/restaurantEmployee/login", produces = "application/json", consumes = "application/json")
+    @PostMapping(value = "/api/restaurantEmployee/login", produces = "application/json", consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<RestaurantEmployeeDTO> login(@Valid @RequestBody RestaurantEmployeeDTO postRestaurantEmployeeDTO, HttpServletResponse servletResponse) {
 
@@ -47,9 +47,9 @@ public class RestaurantEmployeeController {
         String jwtToken = jwtService.tokenGenerator(restaurantEmployeeDTO.getId(), restaurantEmployeeDTO.getUsername(), "employee");
         Cookie cookie = new Cookie("jwt-token", jwtToken);
         cookie.setMaxAge(2 * 24 * 60 * 60);
-        // TODO: Enable when HTTPS is enabled
-        // cookie.setHttpOnly(true);
-        // cookie.setSecure(true);
+
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         servletResponse.addCookie(cookie);
 
         return new ResponseEntity<>(restaurantEmployeeDTO, HttpStatus.OK);
