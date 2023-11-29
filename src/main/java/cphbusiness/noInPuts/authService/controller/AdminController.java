@@ -30,7 +30,7 @@ public class AdminController {
     }
 
     // Endpoint for logging in to an admin account
-    @PostMapping(value = "/admin/login", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/api/admin/login", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AdminDTO> login(@Valid @RequestBody AdminDTO postAdminDTO, HttpServletResponse servletResponse) {
 
@@ -46,9 +46,8 @@ public class AdminController {
         String JwtToken = jwtService.tokenGenerator(adminUser.getId(), adminUser.getUsername(), "admin");
         Cookie cookie = new Cookie("jwt-token", JwtToken);
 
-        // TODO: Enable when HTTPS is enabled
-        //cookie.setHttpOnly(true);
-        //cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
 
         // Cookie is set to expire in 24 hours
         cookie.setMaxAge(24 * 60 * 60);
