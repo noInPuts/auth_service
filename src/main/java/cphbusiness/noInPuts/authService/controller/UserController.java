@@ -3,7 +3,6 @@ package cphbusiness.noInPuts.authService.controller;
 import cphbusiness.noInPuts.authService.dto.UserDTO;
 import cphbusiness.noInPuts.authService.exception.*;
 import cphbusiness.noInPuts.authService.service.JwtService;
-import cphbusiness.noInPuts.authService.service.RabbitMessagePublisher;
 import cphbusiness.noInPuts.authService.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://167.71.45.53:3000"}, maxAge = 3600, allowCredentials = "true")
 @RestController

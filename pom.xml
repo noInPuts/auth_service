@@ -129,6 +129,7 @@
         </dependency>
     </dependencies>
 
+
     <build>
         <finalName>auth_service</finalName>
         <plugins>
@@ -136,6 +137,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
     </build>
 </project>
