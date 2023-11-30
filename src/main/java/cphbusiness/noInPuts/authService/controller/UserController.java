@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://167.71.45.53:3000"}, maxAge = 3600, allowCredentials = "true")
@@ -48,7 +49,9 @@ public class UserController {
         }
 
         // Sets JWT token cookie
-        servletResponse.addCookie(getJwtCookie(userDTO.getId(), userDTO.getUsername()));
+        List<Cookie> cookies = getJwtCookie(userDTO.getId(), userDTO.getUsername());
+        servletResponse.addCookie(cookies.get(0));
+        servletResponse.addCookie(cookies.get(1));
 
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
@@ -67,7 +70,9 @@ public class UserController {
         }
 
         // Sets JWT token cookie
-        servletResponse.addCookie(getJwtCookie(userDTO.getId(), userDTO.getUsername()));
+        List<Cookie> cookies = getJwtCookie(userDTO.getId(), userDTO.getUsername());
+        servletResponse.addCookie(cookies.get(0));
+        servletResponse.addCookie(cookies.get(1));
 
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
@@ -92,12 +97,18 @@ public class UserController {
         Cookie deleteCookie = new Cookie("jwt-token", null);
         deleteCookie.setMaxAge(0);
         deleteCookie.setPath("/");
+
+        Cookie deleteCookie2 = new Cookie("login-status", null);
+        deleteCookie2.setMaxAge(0);
+        deleteCookie2.setPath("/");
+
+        servletResponse.addCookie(deleteCookie2);
         servletResponse.addCookie(deleteCookie);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Cookie getJwtCookie(Long id, String username) {
+    private List<Cookie> getJwtCookie(Long id, String username) {
         // Generate JWT token for user
         String jwtToken = jwtService.tokenGenerator(id, username, "user");
         Cookie cookie = new Cookie("jwt-token", jwtToken);
@@ -106,7 +117,14 @@ public class UserController {
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
 
-        return cookie;
+        // Generate non httpOnly cookie for frontend verification of login
+        Cookie cookie2 = new Cookie("login-status", "true");
+        cookie2.setMaxAge(2 * 24 * 60 * 60);
+        cookie2.setPath("/");
+        cookie2.setSecure(true);
+        cookie2.setHttpOnly(false);
+
+        return List.of(cookie, cookie2);
     }
 
 }
