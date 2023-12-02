@@ -3,6 +3,7 @@ package cphbusiness.noInPuts.authService.steps;
 import cphbusiness.noInPuts.authService.CucumberIntegrationTest;
 import cphbusiness.noInPuts.authService.model.User;
 import cphbusiness.noInPuts.authService.repository.UserRepository;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -13,12 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import io.cucumber.datatable.DataTable;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

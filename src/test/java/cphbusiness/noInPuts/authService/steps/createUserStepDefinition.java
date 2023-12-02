@@ -3,13 +3,13 @@ package cphbusiness.noInPuts.authService.steps;
 import cphbusiness.noInPuts.authService.CucumberIntegrationTest;
 import cphbusiness.noInPuts.authService.model.User;
 import cphbusiness.noInPuts.authService.repository.UserRepository;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import io.cucumber.datatable.DataTable;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
