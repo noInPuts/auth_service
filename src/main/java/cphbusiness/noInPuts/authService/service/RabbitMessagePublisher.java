@@ -15,7 +15,8 @@ public class RabbitMessagePublisher {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void createdUserEvent(String message) {
+    // TODO: USER DELETED EVENT
+    /*public void createdUserEvent(String message) {
         rabbitTemplate.convertAndSend("", "userCreated", message);
-    }
+    }*/
 }
