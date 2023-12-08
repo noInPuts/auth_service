@@ -1,11 +1,10 @@
 package cphbusiness.noInPuts.authService.controller;
 
 import cphbusiness.noInPuts.authService.dto.RestaurantEmployeeDTO;
+import cphbusiness.noInPuts.authService.dto.RestaurantEmployeeLoginDTO;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
-import cphbusiness.noInPuts.authService.service.JwtService;
-import cphbusiness.noInPuts.authService.service.RestaurantEmployeeService;
-import jakarta.servlet.http.Cookie;
+import cphbusiness.noInPuts.authService.facade.ServiceFacade;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(maxAge = 3600)
 public class RestaurantEmployeeController {
 
-    private final RestaurantEmployeeService restaurantEmployeeService;
-
-    private final JwtService jwtService;
+    private final ServiceFacade serviceFacade;
 
     @Autowired
-    public RestaurantEmployeeController(RestaurantEmployeeService restaurantEmployeeService, JwtService jwtService) {
-        this.restaurantEmployeeService = restaurantEmployeeService;
-        this.jwtService = jwtService;
+    public RestaurantEmployeeController(ServiceFacade serviceFacade) {
+        this.serviceFacade = serviceFacade;
     }
 
     // Endpoint for logging in to a restaurant employee account
@@ -33,22 +29,14 @@ public class RestaurantEmployeeController {
     public ResponseEntity<RestaurantEmployeeDTO> login(@Valid @RequestBody RestaurantEmployeeDTO postRestaurantEmployeeDTO, HttpServletResponse servletResponse) {
 
         // Gets restaurant employee account, if it doesn't exist or the password is wrong, return 401
-        RestaurantEmployeeDTO restaurantEmployeeDTO;
+        RestaurantEmployeeLoginDTO restaurantEmployeeLoginDTO;
         try {
-            restaurantEmployeeDTO = restaurantEmployeeService.login(postRestaurantEmployeeDTO.getUsername(), postRestaurantEmployeeDTO.getPassword());
+            restaurantEmployeeLoginDTO = serviceFacade.restaurantEmployeeLogin(postRestaurantEmployeeDTO.getUsername(), postRestaurantEmployeeDTO.getPassword());
         } catch(WrongCredentialsException | UserDoesNotExistException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        // Creates a JWT token and adds it to a cookie
-        String jwtToken = jwtService.tokenGenerator(restaurantEmployeeDTO.getId(), restaurantEmployeeDTO.getUsername(), "employee");
-        Cookie cookie = new Cookie("jwt-token", jwtToken);
-        cookie.setMaxAge(2 * 24 * 60 * 60);
-
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        servletResponse.addCookie(cookie);
-
-        return new ResponseEntity<>(restaurantEmployeeDTO, HttpStatus.OK);
+        servletResponse.addCookie(restaurantEmployeeLoginDTO.getJwtCookie());
+        return new ResponseEntity<>(restaurantEmployeeLoginDTO.getRestaurantEmployee(), HttpStatus.OK);
     }
 }

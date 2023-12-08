@@ -25,10 +25,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public AdminDTO login(AdminDTO adminDTO) throws WrongCredentialsException, UserDoesNotExistException {
+    public AdminDTO login(String username, String password) throws WrongCredentialsException, UserDoesNotExistException {
 
         // Getting the admin user from the database
-        Optional<Admin> optionalAdminUser = adminRepository.findByUsername(adminDTO.getUsername());
+        Optional<Admin> optionalAdminUser = adminRepository.findByUsername(username);
 
         // If the admin user exists, check if the password matches
         if (optionalAdminUser.isPresent()) {
@@ -37,7 +37,7 @@ public class AdminServiceImpl implements AdminService {
             Admin adminUser = optionalAdminUser.get();
 
             // If the password matches, return the admin user
-            if (argon2PasswordEncoder.matches(adminDTO.getPassword(), adminUser.getPassword())) {
+            if (argon2PasswordEncoder.matches(password, adminUser.getPassword())) {
                 return new AdminDTO(adminUser.getId(), adminUser.getUsername(), null);
             } else {
                 throw new WrongCredentialsException("Wrong password");
