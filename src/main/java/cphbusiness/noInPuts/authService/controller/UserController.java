@@ -1,14 +1,11 @@
 package cphbusiness.noInPuts.authService.controller;
 
+import cphbusiness.noInPuts.authService.dto.UserCreateDTO;
 import cphbusiness.noInPuts.authService.dto.UserDTO;
-import cphbusiness.noInPuts.authService.exception.AlreadyLoggedOutException;
-import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
-import cphbusiness.noInPuts.authService.exception.UserAlreadyExistsException;
-import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
-import cphbusiness.noInPuts.authService.exception.WeakPasswordException;
-import cphbusiness.noInPuts.authService.service.JwtService;
-import cphbusiness.noInPuts.authService.service.UserService;
-import jakarta.servlet.http.Cookie;
+import cphbusiness.noInPuts.authService.dto.UserLoginDTO;
+import cphbusiness.noInPuts.authService.dto.UserLogoutDTO;
+import cphbusiness.noInPuts.authService.exception.*;
+import cphbusiness.noInPuts.authService.facade.ServiceFacade;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,33 +13,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @CrossOrigin(origins = {"http://localhost:3000", "http://167.71.45.53:3000"}, maxAge = 3600, allowCredentials = "true")
 @RestController
 public class UserController {
 
-    private final UserService userService;
-    private final JwtService jwtService;
+    private final ServiceFacade serviceFacade;
 
     @Autowired
-    public UserController(UserService userService, JwtService jwtService) {
-        this.userService = userService;
-        this.jwtService = jwtService;
+    public UserController(ServiceFacade serviceFacade) {
+        this.serviceFacade = serviceFacade;
     }
 
     // Endpoint for creating a user account
     @PostMapping(value = "/api/user/create", produces = "application/json", consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    // TODO: Swagger documentation
-    // TODO: Spam check
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
 
         // Create user account, returns 409 if user already exists or 400 if password is weak
-        UserDTO userDTO;
+        UserCreateDTO userCreateDTO;
         try {
             // Creates user and returns userDTO
-            userDTO = userService.createUser(POSTuserDTO);
+            userCreateDTO = serviceFacade.userCreateAccount(POSTuserDTO.getUsername(), POSTuserDTO.getPassword());
         } catch (UserAlreadyExistsException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (WeakPasswordException e) {
@@ -50,11 +41,10 @@ public class UserController {
         }
 
         // Sets JWT token cookie
-        List<Cookie> cookies = getJwtCookie(userDTO.getId(), userDTO.getUsername());
-        servletResponse.addCookie(cookies.get(0));
-        servletResponse.addCookie(cookies.get(1));
+        servletResponse.addCookie(userCreateDTO.getJwtCookie());
+        servletResponse.addCookie(userCreateDTO.getLoginCookie());
 
-        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(userCreateDTO.getUser(), HttpStatus.CREATED);
     }
 
     // Endpoint for logging in to a user account
@@ -63,19 +53,18 @@ public class UserController {
     public ResponseEntity<UserDTO> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
 
         // Check for correct credentials
-        UserDTO userDTO;
+        UserLoginDTO userLoginDTO;
         try {
-            userDTO = userService.login(POSTuserDTO);
+            userLoginDTO = serviceFacade.userLogin(POSTuserDTO.getUsername(), POSTuserDTO.getPassword());
         } catch (WrongCredentialsException | UserDoesNotExistException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         // Sets JWT token cookie
-        List<Cookie> cookies = getJwtCookie(userDTO.getId(), userDTO.getUsername());
-        servletResponse.addCookie(cookies.get(0));
-        servletResponse.addCookie(cookies.get(1));
+        servletResponse.addCookie(userLoginDTO.getJwtCookie());
+        servletResponse.addCookie(userLoginDTO.getLoginCookie());
 
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        return new ResponseEntity<>(userLoginDTO.getUser(), HttpStatus.OK);
     }
 
     @PostMapping(value = "/api/user/logout")
@@ -87,45 +76,20 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        UserLogoutDTO userLogoutDTO;
+
         // Logging user out with jwtService
         try {
-            jwtService.logout(jwtToken);
+            userLogoutDTO = serviceFacade.userLogout(jwtToken);
         } catch (AlreadyLoggedOutException e) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
 
-        // Delete jwt-token cookie
-        Cookie deleteCookie = new Cookie("jwt-token", null);
-        deleteCookie.setMaxAge(0);
-        deleteCookie.setPath("/");
 
-        Cookie deleteCookie2 = new Cookie("login-status", null);
-        deleteCookie2.setMaxAge(0);
-        deleteCookie2.setPath("/");
-
-        servletResponse.addCookie(deleteCookie2);
-        servletResponse.addCookie(deleteCookie);
+        // Add cookies (Removing them technically)
+        servletResponse.addCookie(userLogoutDTO.getLogoutCookie());
+        servletResponse.addCookie(userLogoutDTO.getJwtCookie());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    private List<Cookie> getJwtCookie(Long id, String username) {
-        // Generate JWT token for user
-        String jwtToken = jwtService.tokenGenerator(id, username, "user");
-        Cookie cookie = new Cookie("jwt-token", jwtToken);
-        cookie.setMaxAge(2 * 24 * 60 * 60);
-        cookie.setPath("/");
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-
-        // Generate non httpOnly cookie for frontend verification of login
-        Cookie cookie2 = new Cookie("login-status", "true");
-        cookie2.setMaxAge(2 * 24 * 60 * 60);
-        cookie2.setPath("/");
-        cookie2.setSecure(true);
-        cookie2.setHttpOnly(false);
-
-        return List.of(cookie, cookie2);
-    }
-
 }

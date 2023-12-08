@@ -17,7 +17,6 @@ public class RestaurantEmployeeServiceImpl implements RestaurantEmployeeService 
 
     private final RestaurantEmployeeRepository restaurantEmployeeRepository;
 
-    // TODO: make this own class and autowire it?
     private final Argon2PasswordEncoder argon2PasswordEncoder;
 
     @Autowired

@@ -28,10 +28,10 @@ public class UserServiceImpl implements UserService {
         this.argon2PasswordEncoder = new Argon2PasswordEncoder(16, 32, 1, 128 * 1024, 5);
     }
 
-    public UserDTO createUser(UserDTO userDTO) throws UserAlreadyExistsException, WeakPasswordException {
+    public UserDTO createUser(String username, String password) throws UserAlreadyExistsException, WeakPasswordException {
 
         // Check if user is already registered
-        Optional<User> checkIfUserExist = userRepository.findByUsername(userDTO.getUsername());
+        Optional<User> checkIfUserExist = userRepository.findByUsername(username);
         if (checkIfUserExist.isPresent()) {
             throw new UserAlreadyExistsException("User already exists");
         }
@@ -39,36 +39,33 @@ public class UserServiceImpl implements UserService {
         // Check if password is strong enough (1 Capital letter, 1 number, 1 special character)
         String regex = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?!.*\\s).*$";
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(userDTO.getPassword());
+        Matcher matcher = pattern.matcher(password);
         if (!matcher.matches()) {
             throw new WeakPasswordException("Password is not strong enough");
         }
 
         // Save the user to the database
-        User user = userRepository.save(new User(userDTO.getUsername(), argon2PasswordEncoder.encode(userDTO.getPassword())));
+        User user = userRepository.save(new User(username, argon2PasswordEncoder.encode(password)));
 
         return new UserDTO(user.getId(), user.getUsername());
     }
 
-    public UserDTO login(UserDTO userDTO) throws WrongCredentialsException, UserDoesNotExistException {
+    public UserDTO login(String username, String password) throws WrongCredentialsException, UserDoesNotExistException {
 
         // Check if user exists
-        Optional<User> user = userRepository.findByUsername(userDTO.getUsername());
+        Optional<User> user = userRepository.findByUsername(username);
 
         // If the user exists, check if the password matches
         if (user.isPresent()) {
 
             // If the password matches, return the user, else throw an exception
-            if (argon2PasswordEncoder.matches(userDTO.getPassword(), user.get().getPassword())) {
-                userDTO.setPassword(null);
-                userDTO.setId(user.get().getId());
-            } else {
+            if (!argon2PasswordEncoder.matches(password, user.get().getPassword())) {
                 throw new WrongCredentialsException("Wrong password.");
             }
         } else {
             throw new UserDoesNotExistException("User not found.");
         }
 
-        return userDTO;
+        return new UserDTO(user.get().getId(), user.get().getUsername());
     }
 }
