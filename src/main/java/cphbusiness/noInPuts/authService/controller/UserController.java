@@ -7,8 +7,10 @@ import cphbusiness.noInPuts.authService.exception.UserAlreadyExistsException;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
 import cphbusiness.noInPuts.authService.exception.WeakPasswordException;
 import cphbusiness.noInPuts.authService.service.JwtService;
+import cphbusiness.noInPuts.authService.service.SpamCheckService;
 import cphbusiness.noInPuts.authService.service.UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +26,13 @@ public class UserController {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final SpamCheckService spamCheckService;
 
     @Autowired
-    public UserController(UserService userService, JwtService jwtService) {
+    public UserController(UserService userService, JwtService jwtService, SpamCheckService spamCheckService) {
         this.userService = userService;
         this.jwtService = jwtService;
+        this.spamCheckService = spamCheckService;
     }
 
     // Endpoint for creating a user account
@@ -60,8 +64,12 @@ public class UserController {
     // Endpoint for logging in to a user account
     @PostMapping(value = "/api/user/login", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserDTO> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
+    public ResponseEntity<UserDTO> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse, HttpServletRequest servletRequest) {
 
+        boolean blocked = spamCheckService.isBlocked(spamCheckService.getIp(servletRequest));
+        if(blocked) {
+            return new ResponseEntity<>(HttpStatus.TOO_MANY_REQUESTS);
+        }
         // Check for correct credentials
         UserDTO userDTO;
         try {
