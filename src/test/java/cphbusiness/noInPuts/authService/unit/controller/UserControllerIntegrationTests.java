@@ -1,6 +1,5 @@
-package cphbusiness.noInPuts.authService.controller;
+package cphbusiness.noInPuts.authService.unit.controller;
 
-import cphbusiness.noInPuts.authService.dto.UserDTO;
 import cphbusiness.noInPuts.authService.model.User;
 import cphbusiness.noInPuts.authService.repository.UserRepository;
 import cphbusiness.noInPuts.authService.service.UserService;
@@ -68,7 +67,7 @@ public class UserControllerIntegrationTests {
     @Test
     public void loginShouldReturnWithID() throws Exception {
         // Creating a user and saving it to the database
-        userService.createUser(new UserDTO("test_user", "Password1!"));
+        userService.createUser("test_user", "Password1!");
 
         // Sending a post request to the login endpoint with the user credentials
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))

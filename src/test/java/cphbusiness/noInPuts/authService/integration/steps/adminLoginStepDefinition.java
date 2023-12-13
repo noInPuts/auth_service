@@ -1,6 +1,6 @@
-package cphbusiness.noInPuts.authService.steps;
+package cphbusiness.noInPuts.authService.integration.steps;
 
-import cphbusiness.noInPuts.authService.CucumberIntegrationTest;
+import cphbusiness.noInPuts.authService.integration.CucumberIntegrationTest;
 import cphbusiness.noInPuts.authService.model.Admin;
 import cphbusiness.noInPuts.authService.repository.AdminRepository;
 import io.cucumber.datatable.DataTable;

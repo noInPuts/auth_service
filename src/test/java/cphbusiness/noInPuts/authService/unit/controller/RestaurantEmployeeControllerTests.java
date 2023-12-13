@@ -1,10 +1,12 @@
-package cphbusiness.noInPuts.authService.controller;
+package cphbusiness.noInPuts.authService.unit.controller;
 
+import cphbusiness.noInPuts.authService.controller.RestaurantEmployeeController;
 import cphbusiness.noInPuts.authService.dto.RestaurantEmployeeDTO;
+import cphbusiness.noInPuts.authService.dto.RestaurantEmployeeLoginDTO;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
-import cphbusiness.noInPuts.authService.service.JwtService;
-import cphbusiness.noInPuts.authService.service.RestaurantEmployeeService;
+import cphbusiness.noInPuts.authService.facade.ServiceFacade;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,21 +27,19 @@ public class RestaurantEmployeeControllerTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private RestaurantEmployeeService restaurantEmployeeService;
-
-    @MockBean
-    private JwtService jwtService;
+    private ServiceFacade serviceFacade;
 
     @Test
     public void loginShouldReturnEmployeeObjectAndJWT() throws Exception {
-        // Mocking the restaurantEmployeeService and jwtService
-        when(restaurantEmployeeService.login("employee_user", "Password1!")).thenReturn(new RestaurantEmployeeDTO(1L, "employee_user", "Password1!", null));
-        when(jwtService.tokenGenerator(1L, "employee_user", "employee")).thenReturn("jwtToken");
+        // Mocking the serviceFacade restaurantEmployeeLogin method
+        RestaurantEmployeeDTO restaurantEmployeeDTO = new RestaurantEmployeeDTO(1L, "employee_user", null, null);
+        Cookie jwtCookie = new Cookie("jwt-token", "dummyCookie");
+        when(serviceFacade.restaurantEmployeeLogin("employee_user", "Password1!")).thenReturn(new RestaurantEmployeeLoginDTO(jwtCookie, restaurantEmployeeDTO));
 
         // Sending a post request to the login endpoint with the employee user credentials
         this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{ \"username\": \"employee_user\", \"password\": \"Password1!\"}"))
+                .andExpect(content().json("{ \"username\": \"employee_user\", \"password\": null}"))
                 .andExpect(cookie().exists("jwt-token"));
     }
 
@@ -52,8 +52,9 @@ public class RestaurantEmployeeControllerTests {
 
     @Test
     public void loginShouldReturn400BadRequestWhenWrongCredentials() throws Exception {
-        // Mocking the restaurantEmployeeService
-        when(restaurantEmployeeService.login("employee_user", "Password1!")).thenThrow(new WrongCredentialsException("Wrong password"));
+        // Mocking the serviceFacade restaurantEmployeeLogin method
+        when(serviceFacade.restaurantEmployeeLogin("employee_user", "Password1!"))
+                .thenThrow(new WrongCredentialsException("Wrong credentials"));
 
         // Sending a post request to the login endpoint with the wrong employee user credentials
         this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
@@ -62,8 +63,8 @@ public class RestaurantEmployeeControllerTests {
 
     @Test
     public void loginShouldReturn400BadRequestWhenUserDoesNotExist() throws Exception {
-        // Mocking the restaurantEmployeeService
-        when(restaurantEmployeeService.login("employee_user", "Password1!")).thenThrow(new UserDoesNotExistException("User does not exist"));
+        // Mocking the serviceFacade restaurantEmployeeLogin method
+        when(serviceFacade.restaurantEmployeeLogin("employee_user", "Password1!")).thenThrow(new UserDoesNotExistException("User does not exist"));
 
         // Sending a post request to the login endpoint with wrong username and password
         this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))

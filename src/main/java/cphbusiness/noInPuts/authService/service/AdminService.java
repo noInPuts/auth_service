@@ -5,5 +5,5 @@ import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
 
 public interface AdminService {
-    AdminDTO login(AdminDTO adminDTO) throws WrongCredentialsException, UserDoesNotExistException;
+    AdminDTO login(String username, String password) throws WrongCredentialsException, UserDoesNotExistException;
 }

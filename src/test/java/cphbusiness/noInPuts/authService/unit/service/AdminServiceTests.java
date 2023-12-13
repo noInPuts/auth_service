@@ -1,10 +1,11 @@
-package cphbusiness.noInPuts.authService.service;
+package cphbusiness.noInPuts.authService.unit.service;
 
 import cphbusiness.noInPuts.authService.dto.AdminDTO;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
 import cphbusiness.noInPuts.authService.model.Admin;
 import cphbusiness.noInPuts.authService.repository.AdminRepository;
+import cphbusiness.noInPuts.authService.service.AdminService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +35,7 @@ public class AdminServiceTests {
         when(adminRepository.findByUsername(any(String.class))).thenReturn(Optional.of(new Admin(1L, "admin", argon2PasswordEncoder.encode("Password1!"))));
 
         // Calling the login method with the admin user credentials
-        AdminDTO adminUser = adminService.login(new AdminDTO("admin", "Password1!"));
+        AdminDTO adminUser = adminService.login("admin", "Password1!");
 
         // Asserting that the admin user is not null and that the username and id is correct
         assertEquals("admin", adminUser.getUsername());
@@ -50,7 +51,7 @@ public class AdminServiceTests {
         when(adminRepository.findByUsername(any(String.class))).thenReturn(Optional.of(adminEntity));
 
         // Calling the login method with the admin user credentials
-        AdminDTO adminUser = adminService.login(new AdminDTO("admin", "Password1!"));
+        AdminDTO adminUser = adminService.login("admin", "Password1!");
 
         // Asserting that the admin user is not null and that the username and id is correct
         assertEquals(1, adminUser.getId());
@@ -63,7 +64,7 @@ public class AdminServiceTests {
         when(adminRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
         // Asserting that the login method throws an UserDoesNotExistException when the user does not exists
-        assertThrows(UserDoesNotExistException.class, () -> adminService.login(new AdminDTO("test_user", "Password1!")));
+        assertThrows(UserDoesNotExistException.class, () -> adminService.login("test_user", "Password1!"));
     }
 
     @Test
@@ -73,7 +74,7 @@ public class AdminServiceTests {
         when(adminRepository.findByUsername(any(String.class))).thenReturn(Optional.of(adminEntity));
 
         // Asserting that the login method throws an WrongCredentialsException when the password is wrong
-        assertThrows(WrongCredentialsException.class, () -> adminService.login(new AdminDTO("admin", "Password2!")));
+        assertThrows(WrongCredentialsException.class, () -> adminService.login("admin", "Password2!"));
 
     }
 }

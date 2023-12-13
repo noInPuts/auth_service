@@ -2,6 +2,7 @@ package cphbusiness.noInPuts.authService.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+
 import java.util.Date;
 
 @Table(name = "spam_checks")

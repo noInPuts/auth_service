@@ -1,14 +1,18 @@
-package cphbusiness.noInPuts.authService.controller;
+package cphbusiness.noInPuts.authService.unit.controller;
 
+import cphbusiness.noInPuts.authService.controller.UserController;
+import cphbusiness.noInPuts.authService.dto.UserCreateDTO;
 import cphbusiness.noInPuts.authService.dto.UserDTO;
+import cphbusiness.noInPuts.authService.dto.UserLoginDTO;
+import cphbusiness.noInPuts.authService.dto.UserLogoutDTO;
 import cphbusiness.noInPuts.authService.exception.UserAlreadyExistsException;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
 import cphbusiness.noInPuts.authService.exception.WeakPasswordException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
+import cphbusiness.noInPuts.authService.facade.ServiceFacade;
 import cphbusiness.noInPuts.authService.service.JwtService;
-import cphbusiness.noInPuts.authService.service.RabbitMessagePublisher;
-import cphbusiness.noInPuts.authService.service.UserService;
 import jakarta.servlet.http.Cookie;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,19 +34,24 @@ public class UserControllerTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
+    private ServiceFacade serviceFacade;
 
     @MockBean
     private JwtService jwtService;
 
-    @MockBean
-    private RabbitMessagePublisher rabbitMessagePublisher;
+    @BeforeEach
+    public void mockUserServiceAndJwtService() throws UserAlreadyExistsException, WrongCredentialsException, WeakPasswordException, UserDoesNotExistException {
+        // Mocking serviceFacade
+        Cookie jwtCookie = new Cookie("jwt-token", "dummyToken");
+        Cookie loginCookie = new Cookie("login-status", "true");
+        UserDTO user = new UserDTO(1, "test_user");
+
+        when(serviceFacade.userLogin(any(String.class), any(String.class))).thenReturn(new UserLoginDTO(jwtCookie, loginCookie, user));
+        when(serviceFacade.userCreateAccount(any(String.class), any(String.class))).thenReturn(new UserCreateDTO(jwtCookie, loginCookie, user));
+    }
 
     @Test
     public void createUserShouldReturnUserWithID() throws Exception {
-        // Mocking the userService and jwtService
-        mockUserServiceAndJwtService();
-
         // Sending a post request to the create endpoint with the user credentials
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isCreated())
@@ -54,9 +62,6 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn400BadRequestWhenParsingBadRequest() throws Exception {
-        // Mocking the userService and jwtService
-        mockUserServiceAndJwtService();
-
         // Sending a post request with missing entry
         this.mockMvc.perform(post("/api/user/create").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -64,9 +69,6 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn415UnsupportedeMediaTypeWhenParsingInvalidJson() throws Exception {
-        // Mocking the userService and jwtService
-        mockUserServiceAndJwtService();
-
         // Sending a post request to the create endpoint with wrong content type
         this.mockMvc.perform(post("/api/user/create").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
@@ -74,9 +76,6 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn400BadRequestWhenParsingEmptyUsername() throws Exception {
-        // Mocking the userService and jwtService
-        mockUserServiceAndJwtService();
-
         // Sending a post request to the create endpoint with a blank username
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -84,9 +83,6 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn400BadRequestWhenParsingEmptyPassword() throws Exception {
-        // Mocking the userService and jwtService
-        mockUserServiceAndJwtService();
-
         // Sending a post request to the create endpoint with a blank password
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"user_test\", \"password\": \"\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -94,9 +90,8 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn409ConflictWhenUsernameAlreadyExists() throws Exception {
-        // Mocking the userService and jwtService
-        when(userService.createUser(any(UserDTO.class))).thenThrow(new UserAlreadyExistsException("Username already exists."));
-        when(jwtService.tokenGenerator(any(Long.class), any(String.class), eq("user"))).thenReturn("dummyToken");
+        // Mocking the serviceFacade
+        when(serviceFacade.userCreateAccount(any(String.class), any(String.class))).thenThrow(new UserAlreadyExistsException("Username already exists."));
 
         // Sending a post request to the create endpoint with the same user credentials
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
@@ -105,9 +100,6 @@ public class UserControllerTests {
 
     @Test
     public void loginShouldReturnUserWithID() throws Exception {
-        // Mocking the userService and jwtService
-        mockUserServiceAndJwtService();
-
         // Sending a post request to the login endpoint with the user credentials
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
@@ -117,9 +109,8 @@ public class UserControllerTests {
 
     @Test
     public void loginShouldReturn401UnauthorizedWhenParsingWrongUserCredentianls() throws Exception {
-        // Mocking the userService and jwtService
-        when(userService.login(any(UserDTO.class))).thenThrow(new WrongCredentialsException("Wrong password."));
-        when(jwtService.tokenGenerator(any(Long.class), any(String.class), eq("user"))).thenReturn("dummyToken");
+        // Mocking the serviceFacade
+        when(serviceFacade.userLogin(any(String.class), any(String.class))).thenThrow(new WrongCredentialsException("Wrong password."));
 
         // Sending a post request to the login endpoint with the wrong user credentials
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
@@ -129,8 +120,7 @@ public class UserControllerTests {
     @Test
     public void loginShouldReturn401UnauthorizedWhenUserDoesNotExists() throws Exception {
         // Mocking the userService and jwtService
-        when(userService.login(any(UserDTO.class))).thenThrow(new UserDoesNotExistException("User is not found in the db"));
-        when(jwtService.tokenGenerator(any(Long.class), any(String.class), eq("user"))).thenReturn("dummyToken");
+        when(serviceFacade.userLogin(any(String.class), any(String.class))).thenThrow(new UserDoesNotExistException("User is not found in the db"));
 
         // Sending a post request to the login endpoint with wrong username
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
@@ -139,9 +129,6 @@ public class UserControllerTests {
 
     @Test
     public void loginShouldReturn400BadRequestWhenParsingBadRequest() throws Exception {
-        // Mocking the userService and jwtService
-        mockUserServiceAndJwtService();
-
         // Sending a post request to the login endpoint with missing entry
         this.mockMvc.perform(post("/api/user/login").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -149,9 +136,6 @@ public class UserControllerTests {
 
     @Test
     public void loginShouldReturn415UnsupportedeMediaTypeWhenParsingInvalidJson() throws Exception {
-        // Mocking the userService and jwtService
-        mockUserServiceAndJwtService();
-
         // Sending a post request to the login endpoint with wrong content type
         this.mockMvc.perform(post("/api/user/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
@@ -166,6 +150,11 @@ public class UserControllerTests {
 
     @Test
     public void logout() throws Exception {
+        // Mocking serviceFacade logout method
+        Cookie jwtCookie = new Cookie("jwt-token", "dummyToken");
+        Cookie loginStatusCookie = new Cookie("login-status", null);
+        when(serviceFacade.userLogout(any(String.class))).thenReturn(new UserLogoutDTO(jwtCookie, loginStatusCookie));
+
         // Creating a dummy cookie
         Cookie cookie = new Cookie("jwt-token", "dummyToken");
 
@@ -174,10 +163,4 @@ public class UserControllerTests {
                 .andExpect(status().isOk());
     }
 
-    private void mockUserServiceAndJwtService() throws UserAlreadyExistsException, WrongCredentialsException, WeakPasswordException, UserDoesNotExistException {
-        // Mocking the userService and jwtService
-        when(userService.createUser(any(UserDTO.class))).thenReturn(new UserDTO(1, "test_user"));
-        when(userService.login(any(UserDTO.class))).thenReturn(new UserDTO(1, "test_user"));
-        when(jwtService.tokenGenerator(any(Long.class), any(String.class), eq("user"))).thenReturn("dummyToken");
-    }
 }

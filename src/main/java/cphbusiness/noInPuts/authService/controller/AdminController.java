@@ -1,10 +1,10 @@
 package cphbusiness.noInPuts.authService.controller;
 
 import cphbusiness.noInPuts.authService.dto.AdminDTO;
+import cphbusiness.noInPuts.authService.dto.AdminLoginDTO;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
-import cphbusiness.noInPuts.authService.service.AdminService;
-import cphbusiness.noInPuts.authService.service.JwtService;
+import cphbusiness.noInPuts.authService.facade.ServiceFacade;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,13 +17,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AdminController {
 
-    private final AdminService adminService;
-    private final JwtService jwtService;
+    private final ServiceFacade serviceFacade;
 
     @Autowired
-    public AdminController(AdminService adminService, JwtService jwtService) {
-        this.adminService = adminService;
-        this.jwtService = jwtService;
+    public AdminController(ServiceFacade serviceFacade) {
+        this.serviceFacade = serviceFacade;
     }
 
     // Endpoint for logging in to an admin account
@@ -31,25 +29,25 @@ public class AdminController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AdminDTO> login(@Valid @RequestBody AdminDTO postAdminDTO, HttpServletResponse servletResponse) {
 
-        // Gets admin account, if it doesn't exist or the password is wrong, return 401
-        AdminDTO adminUser;
+        // Creating a cookie and adminDTO
+        Cookie jwtCookie;
+        AdminDTO adminAccount;
+
         try {
-            adminUser = adminService.login(postAdminDTO);
-        } catch (WrongCredentialsException | UserDoesNotExistException e) {
+            // Gets admin account, if it doesn't exist or the password is wrong, return 401 or 404
+            AdminLoginDTO result = serviceFacade.adminLogin(postAdminDTO.getUsername(), postAdminDTO.getPassword());
+            jwtCookie = result.getJwtCookie();
+            adminAccount = result.getAdminAccount();
+        } catch (WrongCredentialsException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (UserDoesNotExistException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // Creates a JWT token and adds it to a cookie
-        String JwtToken = jwtService.tokenGenerator(adminUser.getId(), adminUser.getUsername(), "admin");
-        Cookie cookie = new Cookie("jwt-token", JwtToken);
-
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-
-        // Cookie is set to expire in 24 hours
-        cookie.setMaxAge(24 * 60 * 60);
-        servletResponse.addCookie(cookie);
-
-        return new ResponseEntity<>(adminUser, HttpStatus.OK);
+        // Adds cookie to response and returns adminDTO
+        servletResponse.addCookie(jwtCookie);
+        return new ResponseEntity<>(adminAccount, HttpStatus.OK);
     }
 }

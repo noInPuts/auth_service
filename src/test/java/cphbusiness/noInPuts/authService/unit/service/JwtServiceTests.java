@@ -1,8 +1,9 @@
-package cphbusiness.noInPuts.authService.service;
+package cphbusiness.noInPuts.authService.unit.service;
 
 import cphbusiness.noInPuts.authService.dto.UserDTO;
 import cphbusiness.noInPuts.authService.exception.AlreadyLoggedOutException;
 import cphbusiness.noInPuts.authService.repository.JwtRepository;
+import cphbusiness.noInPuts.authService.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
