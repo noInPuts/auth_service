@@ -18,10 +18,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-class SpamCheckServiceTest {
+class SpamCheckServiceImplTest {
 
     @Autowired
-    private SpamCheckService spamCheckService;
+    private SpamCheckServiceImpl spamCheckServiceImpl;
 
     @MockBean
     private SpamCheckRepository spamCheckRepository;
@@ -30,7 +30,7 @@ class SpamCheckServiceTest {
     public void getIpWhenUserAttemptsLogin() {
         //test if ip is returned when user attempts login
         HttpServletRequest loginRequest = mock(HttpServletRequest.class);
-        assertEquals(any(String.class),spamCheckService.getIp(loginRequest));
+        assertEquals(any(String.class), spamCheckServiceImpl.getIp(loginRequest));
     }
 
     @Test
@@ -44,7 +44,7 @@ class SpamCheckServiceTest {
         }
         when(spamCheckRepository.findAllByIpAndTimestampIsGreaterThan(any(), any(Date.class))).thenReturn(spamCheckList);
 
-        assertTrue(spamCheckService.isBlocked(spamCheckService.getIp(loginRequest)));
+        assertTrue(spamCheckServiceImpl.isBlocked(spamCheckServiceImpl.getIp(loginRequest)));
     }
 
     @Test
@@ -55,6 +55,6 @@ class SpamCheckServiceTest {
         spamCheckList.add(new SpamCheck(null));
         when(spamCheckRepository.findAllByIpAndTimestampIsGreaterThan(any(), any(Date.class))).thenReturn(spamCheckList);
 
-        assertFalse(spamCheckService.isBlocked(spamCheckService.getIp(loginRequest)));
+        assertFalse(spamCheckServiceImpl.isBlocked(spamCheckServiceImpl.getIp(loginRequest)));
     }
 }

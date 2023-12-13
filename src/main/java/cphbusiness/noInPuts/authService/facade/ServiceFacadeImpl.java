@@ -16,16 +16,16 @@ public class ServiceFacadeImpl implements ServiceFacade {
     private final JwtService jwtService;
     private final RestaurantEmployeeService restaurantEmployeeService;
     private final CookieHandlerService cookieHandlerService;
-    private final SpamCheckService spamCheckService;
+    private final SpamCheckServiceImpl spamCheckServiceImpl;
 
     @Autowired
-    public ServiceFacadeImpl(SpamCheckService spamCheckService, AdminService adminService, UserService userService, JwtService jwtService, RestaurantEmployeeService restaurantEmployeeService, CookieHandlerService cookieHandlerService) {
+    public ServiceFacadeImpl(SpamCheckServiceImpl spamCheckServiceImpl, AdminService adminService, UserService userService, JwtService jwtService, RestaurantEmployeeService restaurantEmployeeService, CookieHandlerService cookieHandlerService) {
         this.adminService = adminService;
         this.userService = userService;
         this.jwtService = jwtService;
         this.restaurantEmployeeService = restaurantEmployeeService;
         this.cookieHandlerService = cookieHandlerService;
-        this.spamCheckService = spamCheckService;
+        this.spamCheckServiceImpl = spamCheckServiceImpl;
     }
 
 
@@ -101,7 +101,7 @@ public class ServiceFacadeImpl implements ServiceFacade {
 
     @Override
     public boolean isClientBlocked(HttpServletRequest request) {
-        String ip = spamCheckService.getIp(request);
-        return spamCheckService.isBlocked(ip);
+        String ip = spamCheckServiceImpl.getIp(request);
+        return spamCheckServiceImpl.isBlocked(ip);
     }
 }
