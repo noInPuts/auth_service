@@ -1,10 +1,11 @@
-package cphbusiness.noInPuts.authService.service;
+package cphbusiness.noInPuts.authService.unit.service;
 
 import cphbusiness.noInPuts.authService.dto.AdminDTO;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
 import cphbusiness.noInPuts.authService.model.Admin;
 import cphbusiness.noInPuts.authService.repository.AdminRepository;
+import cphbusiness.noInPuts.authService.service.AdminService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

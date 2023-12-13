@@ -1,5 +1,6 @@
-package cphbusiness.noInPuts.authService.service;
+package cphbusiness.noInPuts.authService.unit.service;
 
+import cphbusiness.noInPuts.authService.service.CookieHandlerService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

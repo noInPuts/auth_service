@@ -1,6 +1,7 @@
-package cphbusiness.noInPuts.authService.repository;
+package cphbusiness.noInPuts.authService.unit.repository;
 
 import cphbusiness.noInPuts.authService.model.User;
+import cphbusiness.noInPuts.authService.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

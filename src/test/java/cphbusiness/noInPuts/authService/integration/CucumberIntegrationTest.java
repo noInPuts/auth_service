@@ -1,4 +1,4 @@
-package cphbusiness.noInPuts.authService;
+package cphbusiness.noInPuts.authService.integration;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

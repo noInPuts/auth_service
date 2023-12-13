@@ -1,4 +1,4 @@
-package cphbusiness.noInPuts.authService.controller;
+package cphbusiness.noInPuts.authService.unit.controller;
 
 import cphbusiness.noInPuts.authService.model.Restaurant;
 import cphbusiness.noInPuts.authService.model.RestaurantEmployee;
