@@ -6,6 +6,7 @@ import cphbusiness.noInPuts.authService.dto.UserLoginDTO;
 import cphbusiness.noInPuts.authService.dto.UserLogoutDTO;
 import cphbusiness.noInPuts.authService.exception.*;
 import cphbusiness.noInPuts.authService.facade.ServiceFacade;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,12 @@ public class UserController {
     // Endpoint for logging in to a user account
     @PostMapping(value = "/api/user/login", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserDTO> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
+    public ResponseEntity<UserDTO> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse, HttpServletRequest servletRequest) {
 
+        boolean blocked = serviceFacade.isClientBlocked(servletRequest);
+        if(blocked) {
+            return new ResponseEntity<>(HttpStatus.TOO_MANY_REQUESTS);
+        }
         // Check for correct credentials
         UserLoginDTO userLoginDTO;
         try {

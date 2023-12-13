@@ -4,6 +4,7 @@ import cphbusiness.noInPuts.authService.dto.*;
 import cphbusiness.noInPuts.authService.exception.*;
 import cphbusiness.noInPuts.authService.service.*;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +16,16 @@ public class ServiceFacadeImpl implements ServiceFacade {
     private final JwtService jwtService;
     private final RestaurantEmployeeService restaurantEmployeeService;
     private final CookieHandlerService cookieHandlerService;
+    private final SpamCheckServiceImpl spamCheckServiceImpl;
 
     @Autowired
-    public ServiceFacadeImpl(AdminService adminService, UserService userService, JwtService jwtService, RestaurantEmployeeService restaurantEmployeeService, CookieHandlerService cookieHandlerService) {
+    public ServiceFacadeImpl(SpamCheckServiceImpl spamCheckServiceImpl, AdminService adminService, UserService userService, JwtService jwtService, RestaurantEmployeeService restaurantEmployeeService, CookieHandlerService cookieHandlerService) {
         this.adminService = adminService;
         this.userService = userService;
         this.jwtService = jwtService;
         this.restaurantEmployeeService = restaurantEmployeeService;
         this.cookieHandlerService = cookieHandlerService;
+        this.spamCheckServiceImpl = spamCheckServiceImpl;
     }
 
 
@@ -94,5 +97,11 @@ public class ServiceFacadeImpl implements ServiceFacade {
         jwtService.logout(token);
 
         return new UserLogoutDTO(cookieHandlerService.getDeleteAuthCookie(), cookieHandlerService.getLogoutStatusCookie());
+    }
+
+    @Override
+    public boolean isClientBlocked(HttpServletRequest request) {
+        String ip = spamCheckServiceImpl.getIp(request);
+        return spamCheckServiceImpl.isBlocked(ip);
     }
 }
