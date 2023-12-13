@@ -1,4 +1,4 @@
-package cphbusiness.noInPuts.authService.service;
+package cphbusiness.noInPuts.authService.unit.service;
 
 import cphbusiness.noInPuts.authService.dto.RestaurantEmployeeDTO;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
@@ -6,6 +6,7 @@ import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
 import cphbusiness.noInPuts.authService.model.Restaurant;
 import cphbusiness.noInPuts.authService.model.RestaurantEmployee;
 import cphbusiness.noInPuts.authService.repository.RestaurantEmployeeRepository;
+import cphbusiness.noInPuts.authService.service.RestaurantEmployeeService;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

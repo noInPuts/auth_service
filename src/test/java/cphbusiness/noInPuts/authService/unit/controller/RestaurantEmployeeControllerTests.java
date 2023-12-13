@@ -1,5 +1,6 @@
-package cphbusiness.noInPuts.authService.controller;
+package cphbusiness.noInPuts.authService.unit.controller;
 
+import cphbusiness.noInPuts.authService.controller.RestaurantEmployeeController;
 import cphbusiness.noInPuts.authService.dto.RestaurantEmployeeDTO;
 import cphbusiness.noInPuts.authService.dto.RestaurantEmployeeLoginDTO;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
@@ -52,7 +53,8 @@ public class RestaurantEmployeeControllerTests {
     @Test
     public void loginShouldReturn400BadRequestWhenWrongCredentials() throws Exception {
         // Mocking the serviceFacade restaurantEmployeeLogin method
-        when(serviceFacade.restaurantEmployeeLogin("employee_user", "Password1!")).thenThrow(new WrongCredentialsException("Wrong credentials"));
+        when(serviceFacade.restaurantEmployeeLogin("employee_user", "Password1!"))
+                .thenThrow(new WrongCredentialsException("Wrong credentials"));
 
         // Sending a post request to the login endpoint with the wrong employee user credentials
         this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))

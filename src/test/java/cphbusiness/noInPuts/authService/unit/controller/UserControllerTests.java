@@ -1,5 +1,6 @@
-package cphbusiness.noInPuts.authService.controller;
+package cphbusiness.noInPuts.authService.unit.controller;
 
+import cphbusiness.noInPuts.authService.controller.UserController;
 import cphbusiness.noInPuts.authService.dto.UserCreateDTO;
 import cphbusiness.noInPuts.authService.dto.UserDTO;
 import cphbusiness.noInPuts.authService.dto.UserLoginDTO;

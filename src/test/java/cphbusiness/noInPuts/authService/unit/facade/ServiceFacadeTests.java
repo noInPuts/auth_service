@@ -1,7 +1,8 @@
-package cphbusiness.noInPuts.authService.facade;
+package cphbusiness.noInPuts.authService.unit.facade;
 
 import cphbusiness.noInPuts.authService.dto.*;
 import cphbusiness.noInPuts.authService.exception.*;
+import cphbusiness.noInPuts.authService.facade.ServiceFacade;
 import cphbusiness.noInPuts.authService.service.*;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;

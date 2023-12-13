@@ -1,4 +1,4 @@
-package cphbusiness.noInPuts.authService;
+package cphbusiness.noInPuts.authService.integration;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;

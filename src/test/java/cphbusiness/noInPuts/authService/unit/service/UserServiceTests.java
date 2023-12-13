@@ -1,4 +1,4 @@
-package cphbusiness.noInPuts.authService.service;
+package cphbusiness.noInPuts.authService.unit.service;
 
 import cphbusiness.noInPuts.authService.dto.UserDTO;
 import cphbusiness.noInPuts.authService.exception.UserAlreadyExistsException;
@@ -7,6 +7,7 @@ import cphbusiness.noInPuts.authService.exception.WeakPasswordException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
 import cphbusiness.noInPuts.authService.model.User;
 import cphbusiness.noInPuts.authService.repository.UserRepository;
+import cphbusiness.noInPuts.authService.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -93,5 +94,21 @@ public class UserServiceTests {
 
         // Asserting that the login method throws an WrongCredentialsException when the password is wrong
         assertThrows(WrongCredentialsException.class, () -> userService.login("test_user", "Password2!"));
+    }
+
+    @Test
+    public void loginBenchmark() throws WrongCredentialsException, UserDoesNotExistException {
+        // Mocking the userRepository
+        User userEntity = new User("test_user", argon2PasswordEncoder.encode("Password1!"));
+        userEntity.setId(1);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userEntity));
+
+        // Calling the login method with the userDTO
+        var t0 = System.nanoTime();
+        UserDTO user = userService.login("test_user", "Password1!");
+        var dt = (System.nanoTime() - t0) / 1e6;
+        System.out.println("loginBenchmark: " + dt + " ms");
+        // Asserting that the user is not null and that the username and id is correct
+        assertEquals(1, user.getId());
     }
 }

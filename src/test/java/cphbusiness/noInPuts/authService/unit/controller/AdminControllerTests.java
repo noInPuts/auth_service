@@ -1,5 +1,6 @@
-package cphbusiness.noInPuts.authService.controller;
+package cphbusiness.noInPuts.authService.unit.controller;
 
+import cphbusiness.noInPuts.authService.controller.AdminController;
 import cphbusiness.noInPuts.authService.dto.AdminDTO;
 import cphbusiness.noInPuts.authService.dto.AdminLoginDTO;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;

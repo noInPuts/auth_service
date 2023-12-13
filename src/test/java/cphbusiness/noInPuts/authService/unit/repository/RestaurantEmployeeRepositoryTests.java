@@ -1,7 +1,9 @@
-package cphbusiness.noInPuts.authService.repository;
+package cphbusiness.noInPuts.authService.unit.repository;
 
 import cphbusiness.noInPuts.authService.model.Restaurant;
 import cphbusiness.noInPuts.authService.model.RestaurantEmployee;
+import cphbusiness.noInPuts.authService.repository.RestaurantEmployeeRepository;
+import cphbusiness.noInPuts.authService.repository.RestaurantRepository;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
