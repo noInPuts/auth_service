@@ -34,15 +34,18 @@ public class UserServiceTests {
 
     @Test
     public void createUserShouldReturnWithID() throws UserAlreadyExistsException, WeakPasswordException {
+        // Arrange
         // Mocking the userRepository
         User user = new User("test_user", "password");
         user.setId(1);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
+        // Act
         // Calling the createUser method with the userDTO
         String username = "test_user";
         UserDTO createdUserDTO = userService.createUser(username, "Password1!");
 
+        // Assert
         // Asserting that the createdUserDTO is not null and that the username and id is correct
         assertEquals(createdUserDTO.getUsername(), username);
         assertEquals(createdUserDTO.getId(), 1);
@@ -50,64 +53,75 @@ public class UserServiceTests {
 
     @Test
     public void createUserShouldThrowExceptionWhenUserAlreadyExist() {
+        // Arrange
         // Mocking the userRepository
         User user = new User("user", "Password1!");
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
 
+        // Act and Assert
         // Assert that the createUser method throws UserAlreadyExistsException when the user already exists
         assertThrows(UserAlreadyExistsException.class, () -> userService.createUser("test_user", "Password1!"));
     }
 
     @Test
     public void createUserShouldThrowExceptionWhenPasswordIsToWeak() {
+        // Act and Assert
         // Assert that the createUser method throws WeakPasswordException when the password is to weak
         assertThrows(WeakPasswordException.class, () -> userService.createUser("test_user", "weak"));
     }
 
     @Test
     public void loginShouldReturnUserWithID() throws WrongCredentialsException, UserDoesNotExistException {
+        // Arrange
         // Mocking the userRepository
         User userEntity = new User("test_user", argon2PasswordEncoder.encode("Password1!"));
         userEntity.setId(1);
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userEntity));
 
+        // Act
         // Calling the login method with the userDTO
         UserDTO user = userService.login("test_user", "Password1!");
 
+        // Assert
         // Asserting that the user is not null and that the username and id is correct
         assertEquals(1, user.getId());
     }
 
     @Test
     public void loginShouldThrowExceptionWhenUserDoNotExists() {
+        // Arrange
         // Mocking the userRepository
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
+        // Act and Assert
         // Asserting that the login method throws an UserDoesNotExistException when the user does not exists
         assertThrows(UserDoesNotExistException.class, () -> userService.login("test_user", "Password1!"));
     }
 
     @Test
     public void loginShouldThrowExceptionWhenPasswordIsWrong() {
+        // Arrange
         // Mocking the userRepository
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(new User("test_user", argon2PasswordEncoder.encode("Password1!"))));
 
+        // Act and Assert
         // Asserting that the login method throws an WrongCredentialsException when the password is wrong
         assertThrows(WrongCredentialsException.class, () -> userService.login("test_user", "Password2!"));
     }
 
     @Test
     public void loginBenchmark() throws WrongCredentialsException, UserDoesNotExistException {
+        // Arrange
         // Mocking the userRepository
         User userEntity = new User("test_user", argon2PasswordEncoder.encode("Password1!"));
         userEntity.setId(1);
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userEntity));
 
+        // Act
         // Calling the login method with the userDTO
-        var t0 = System.nanoTime();
         UserDTO user = userService.login("test_user", "Password1!");
-        var dt = (System.nanoTime() - t0) / 1e6;
-        System.out.println("loginBenchmark: " + dt + " ms");
+
+        // Assert
         // Asserting that the user is not null and that the username and id is correct
         assertEquals(1, user.getId());
     }

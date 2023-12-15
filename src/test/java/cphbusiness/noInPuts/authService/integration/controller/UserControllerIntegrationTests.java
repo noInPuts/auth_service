@@ -1,4 +1,4 @@
-package cphbusiness.noInPuts.authService.unit.controller;
+package cphbusiness.noInPuts.authService.integration.controller;
 
 import cphbusiness.noInPuts.authService.model.User;
 import cphbusiness.noInPuts.authService.repository.UserRepository;
@@ -31,6 +31,7 @@ public class UserControllerIntegrationTests {
 
     @Test
     public void createUserShouldReturnAccountWithID() throws Exception {
+        // Act and Assert
         // Sending a post request to the create endpoint with the user credentials
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isCreated())
@@ -41,6 +42,7 @@ public class UserControllerIntegrationTests {
 
     @Test
     public void createUserShouldReturnBadRequestWhenUsernameIsBlank() throws Exception {
+        // Act and Assert
         // Sending a post request to the create endpoint with a blank username
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -48,6 +50,7 @@ public class UserControllerIntegrationTests {
 
     @Test
     public void createUserShouldReturnUnsupportedMediaTypeWhenNotParsingJson() throws Exception {
+        // Act and Assert
         // Sending a post request to the create endpoint with wrong content type
         this.mockMvc.perform(post("/api/user/create").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
@@ -55,10 +58,12 @@ public class UserControllerIntegrationTests {
 
     @Test
     public void createUserShouldReturnConfictWhenUserAlreadyExists() throws Exception {
+        // Arrange
         // Creating a user and saving it to the database
         User user = new User("test_user", "Password1!");
         userRepository.save(user);
 
+        // Act and Assert
         // Sending a post request to the create endpoint with the same user credentials
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isConflict());
@@ -66,9 +71,11 @@ public class UserControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnWithID() throws Exception {
+        // Arrange
         // Creating a user and saving it to the database
         userService.createUser("test_user", "Password1!");
 
+        // Act and Assert
         // Sending a post request to the login endpoint with the user credentials
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
@@ -78,11 +85,13 @@ public class UserControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnWithID2() throws Exception {
+        // Arrange
         // Creating a user and saving it to the database
         Argon2PasswordEncoder argon2PasswordEncoder = new Argon2PasswordEncoder(16, 32, 1, 128 * 1024, 5);
         User user = new User("test_user", argon2PasswordEncoder.encode("Password1!"));
         userRepository.save(user);
 
+        // Act and Assert
         // Sending a post request to the login endpoint with the user credentials
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
@@ -92,6 +101,7 @@ public class UserControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnBadRequestWhenUsernameIsBlank() throws Exception {
+        // Act and Assert
         // Sending a post request to the login endpoint with a blank username
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -99,6 +109,7 @@ public class UserControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnUnsupportedMediaTypeWhenNotParsingJson() throws Exception {
+        // Act and Assert
         // Sending a post request to the login endpoint with wrong content type
         this.mockMvc.perform(post("/api/user/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
@@ -106,10 +117,12 @@ public class UserControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnBadRequestWhenCredentialsAreWrong() throws Exception {
+        // Arrange
         // Creating a user and saving it to the database
         User user = new User("test_user", "Password1!");
         userRepository.save(user);
 
+        // Act and Assert
         // Sending a post request to the login endpoint with the wrong password
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"\", \"password\": \"Password2!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());

@@ -33,9 +33,11 @@ public class AdminControllerTests {
 
     @Test
     public void loginShouldReturnAdmin() throws Exception {
+        // Arrange
         // Mocking serviceFacade adminLogin method
         mockAdminLoginMethod();
 
+        // Act and Assert
         // Sending a post request to the login endpoint with the admin user credentials
         this.mockMvc.perform(post("/api/admin/login").content("{ \"username\": \"admin\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
@@ -46,9 +48,11 @@ public class AdminControllerTests {
 
     @Test
     public void loginShouldReturn401UnauthorizedWhenParsingWrongUserCredentials() throws Exception {
+        // Arrange
         // Mocking serviceFacade adminLogin method
         when(serviceFacade.adminLogin(any(String.class), any(String.class))).thenThrow(new WrongCredentialsException("Wrong password."));
 
+        // Act and Assert
         // Sending a post request to the login endpoint with the wrong admin user credentials
         this.mockMvc.perform(post("/api/admin/login").content("{ \"username\": \"admin\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());
@@ -56,9 +60,11 @@ public class AdminControllerTests {
 
     @Test
     public void loginShouldReturn404NotFoundWhenUserDoesNotExists() throws Exception {
+        // Arrange
         // Mocking serviceFacade adminLogin method
         when(serviceFacade.adminLogin(any(String.class), any(String.class))).thenThrow(new UserDoesNotExistException("User is not found in the db"));
 
+        // Act and Assert
         // Sending a post request to the login endpoint with wrong username
         this.mockMvc.perform(post("/api/admin/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isNotFound());
@@ -66,9 +72,11 @@ public class AdminControllerTests {
 
     @Test
     public void loginShouldReturn400BadRequestWhenParsingBadRequest() throws Exception {
+        // Arrange
         // Mocking adminService and jwtService
         mockAdminLoginMethod();
 
+        // Act and Assert
         // Sending a post request to the login endpoint with missing entry
         this.mockMvc.perform(post("/api/admin/login").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -76,21 +84,23 @@ public class AdminControllerTests {
 
     @Test
     public void loginShouldReturn415UnsupportedeMediaTypeWhenParsingInvalidJson() throws Exception {
+        // Arrange
         // Mocking adminService and jwtService
         mockAdminLoginMethod();
 
+        // Act and Assert
         // Sending a post request to the login endpoint with wrong content type
         this.mockMvc.perform(post("/api/admin/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
     }
 
     private void mockAdminLoginMethod() throws WrongCredentialsException, UserDoesNotExistException {
-        // Creating fake AdminDTO
+        // Arrange
+        // Creating fake AdminDTO & fake Cookie
         AdminDTO adminDTO = new AdminDTO(1L, "admin", null);
-
-        // Creating fake Cookie
         Cookie jwtCookie = new Cookie("jwt-token", "dummyToken");
 
+        // Act and Assert
         // Mocking serviceFacade
         when(serviceFacade.adminLogin(any(String.class), any(String.class))).thenReturn(new AdminLoginDTO(jwtCookie, adminDTO));
     }

@@ -39,19 +39,23 @@ public class ServiceFacadeTests {
 
     @BeforeEach
     public void setup() {
+        // Arrange
         when(jwtService.tokenGenerator(any(Long.class), any(String.class), any(String.class))).thenReturn("dummyToken");
         when(cookieHandlerService.getAuthCookie(any(String.class))).thenReturn(new Cookie("jwt-token", "dummyCookie"));
     }
 
     @Test
     public void adminLoginTest() throws UserDoesNotExistException, WrongCredentialsException {
+        // Arrange
         // Mocking adminService
         when(adminService.login(any(String.class), any(String.class))).thenReturn(new AdminDTO(1L, "admin", null));
 
+        // Act
         AdminLoginDTO adminLoginDTO = serviceFacade.adminLogin("admin", "Password1!");
         AdminDTO adminDTO = adminLoginDTO.getAdminAccount();
         Cookie cookie = adminLoginDTO.getJwtCookie();
 
+        // Assert
         // Asserting adminDTO
         assertEquals(1, adminDTO.getId());
         assertEquals("admin", adminDTO.getUsername());
@@ -64,13 +68,16 @@ public class ServiceFacadeTests {
 
     @Test
     public void restaurantEmployeeLoginTest() throws UserDoesNotExistException, WrongCredentialsException {
+        // Arrange
         // Mocking restaurantService
         when(restaurantEmployeeService.login(any(String.class), any(String.class))).thenReturn(new RestaurantEmployeeDTO(1L, "employee_user", null, null));
 
+        // Act
         RestaurantEmployeeLoginDTO restaurantEmployeeLoginDTO = serviceFacade.restaurantEmployeeLogin("employee_user", "Password1!");
         RestaurantEmployeeDTO restaurantEmployeeDTO = restaurantEmployeeLoginDTO.getRestaurantEmployee();
         Cookie cookie = restaurantEmployeeLoginDTO.getJwtCookie();
 
+        // Assert
         // Asserting adminDTO
         assertEquals(1, restaurantEmployeeDTO.getId());
         assertEquals("employee_user", restaurantEmployeeDTO.getUsername());
@@ -83,14 +90,17 @@ public class ServiceFacadeTests {
 
     @Test
     public void createUserAccountTest() throws UserAlreadyExistsException, WeakPasswordException {
+        // Arrange
         // Mocking the userService
         when(userService.createUser(any(String.class), any(String.class))).thenReturn(new UserDTO(1L, "user"));
         when(cookieHandlerService.getLoginStatusCookie()).thenReturn(new Cookie("login-status", "true"));
 
+        // Act
         UserCreateDTO userCreateDTO = serviceFacade.userCreateAccount("user", "Password1!");
         Cookie jwtCookie = userCreateDTO.getJwtCookie();
         Cookie loginCookie = userCreateDTO.getLoginCookie();
 
+        // Assert
         // Asserting userDTO
         assertEquals(1, userCreateDTO.getUser().getId());
         assertEquals("user", userCreateDTO.getUser().getUsername());
@@ -105,6 +115,7 @@ public class ServiceFacadeTests {
 
     @Test
     public void logoutTest() throws AlreadyLoggedOutException {
+        // Arrange
         // Mocking the cookieHandlerService
         Cookie fakeLogoutCookie = new Cookie("login-status", null);
         fakeLogoutCookie.setMaxAge(0);
@@ -113,6 +124,7 @@ public class ServiceFacadeTests {
         when(cookieHandlerService.getDeleteAuthCookie()).thenReturn(fakeAuthCookie);
         when(cookieHandlerService.getLogoutStatusCookie()).thenReturn(fakeLogoutCookie);
 
+        // Act
         UserLogoutDTO userLogoutDTO = serviceFacade.userLogout("DummyToken");
         Cookie authCookie = userLogoutDTO.getJwtCookie();
         Cookie logoutCookie = userLogoutDTO.getLogoutCookie();
@@ -124,7 +136,5 @@ public class ServiceFacadeTests {
         assertEquals("jwt-token", authCookie.getName());
         assertNull(authCookie.getValue());
         assertEquals(0, authCookie.getMaxAge());
-
-
     }
 }
