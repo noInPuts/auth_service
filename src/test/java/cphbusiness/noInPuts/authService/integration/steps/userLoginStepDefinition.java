@@ -39,6 +39,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
 
     @Given("I want to login, onto the {string} account with {string} as the password")
     public void i_want_to_login_onto_the_test_user(String username, String password) {
+        // Arrange
         // Creating a user and saving it to the database
         User user = new User(username, argon2PasswordEncoder.encode(password));
         userRepository.save(user);
@@ -46,6 +47,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
 
     @When("I make a login POST request to {string} with the following body:")
     public void post_request_to_login_endpoint(String endpoint, DataTable dataTable) throws Exception {
+        // Act and Assert
         // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
@@ -72,6 +74,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
 
     @Then("I should receive the user object and JWT:")
     public void receiving_the_object_and_jwt(DataTable dataTable) {
+        // Assert
         // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
@@ -84,6 +87,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
 
     @Given("I want to make login request, with the following credentials {string} {string}")
     public void i_want_to_login_onto_the_test_user_account_with_pAssword_1_as_the_password(String username, String password) {
+        // Arrange
         // Creating a user and saving it to the database
         User user = new User(username, argon2PasswordEncoder.encode(password));
         userRepository.save(user);
@@ -91,6 +95,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
 
     @When("I make a login POST request with wrong password to {string} with the following body:")
     public void i_make_a_login_post_request_to_with_the_following_body(String endpoint, DataTable dataTable) throws Exception {
+        // Act
         // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
@@ -101,6 +106,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
 
     @Then("I should receive a 401 status code")
     public void i_should_receive_a_401_status_code() {
+        // Assert
         // Asserting that the response status code is 401
         assertEquals(401, result.getResponse().getStatus());
     }

@@ -36,6 +36,7 @@ public class adminLoginStepDefinition extends CucumberIntegrationTest {
 
     @Given("I have an admin account in the DB with username {string} and password {string}")
     public void i_have_an_admin_account_in_the_db_with_username_and_password(String username, String password) {
+        // Arrange
         // Creating an admin user and saving it to the database
         Argon2PasswordEncoder argon2PasswordEncoder = new Argon2PasswordEncoder(16, 32, 1, 128 * 1024, 5);
         adminRepository.save(new Admin(username, argon2PasswordEncoder.encode(password)));
@@ -43,6 +44,7 @@ public class adminLoginStepDefinition extends CucumberIntegrationTest {
 
     @When("I make a admin login POST request to {string} with the following body")
     public void admin_login_post_request(String endpoint, String content) throws Exception {
+        // Act
         // Making a POST request to the admin login endpoint with the admin user credentials
         result = this.mockMvc.perform(post(endpoint).content(content).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -51,6 +53,7 @@ public class adminLoginStepDefinition extends CucumberIntegrationTest {
 
     @Then("The response status code should be {int} and i should receive a token and my admin details:")
     public void the_reponse_status_should_be(int statusCode, DataTable dataTable) throws UnsupportedEncodingException {
+        // Assert
         // Asserting that the response status code is 200 and that the response body contains a token and the admin details
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
         MockHttpServletResponse response = result.getResponse();

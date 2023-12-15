@@ -24,9 +24,11 @@ public class AdminRepositoryTests {
 
     @Test
     public void saveAdmin() {
+        // Act
         // Creating an admin user and saving it to the database
         Admin admin = adminRepository.save(new Admin("admin", "password"));
 
+        // Assert
         // Asserting that the admin user is not null and that the username and password is correct
         assertNotNull(admin);
         assertEquals("admin", admin.getUsername());
@@ -35,10 +37,12 @@ public class AdminRepositoryTests {
 
     @Test
     public void getUserShouldReturnOptionalOfUser() {
+        // Act
         // Creating an admin user and saving it to the database
         adminRepository.save(new Admin("admin", "password"));
         Optional<Admin> adminUser = adminRepository.findByUsername("admin");
 
+        // Assert
         // Asserting that the admin user is present and that the username is correct
         assertTrue(adminUser.isPresent());
         assertEquals("admin", adminUser.get().getUsername());

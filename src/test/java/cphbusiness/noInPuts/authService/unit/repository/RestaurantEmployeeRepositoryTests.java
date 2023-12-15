@@ -27,15 +27,17 @@ public class RestaurantEmployeeRepositoryTests {
 
     @Test
     public void getRestaurantEmployeesByRestaurantId() {
-
+        // Arrange
         // Creating object that can generate fake data and persisting a restaurant employee object
         Faker faker = new Faker();
         Restaurant restaurantEntity = peristRestaurant(faker);
         RestaurantEmployee restaurantEmployeeEntity = persistRestaurantEmployee(restaurantEntity);
 
+        // Act
         // Getting the restaurant employee object from the DB by the restaurant id
         List<RestaurantEmployee> restaurantEmployees = restaurantEmployeeRepository.findAllByRestaurantId(restaurantEntity.getId());
 
+        // Assert
         // Asserting that the restaurant employee object is not null and that the username is correct
         assertNotNull(restaurantEmployeeEntity);
         assertEquals(restaurantEmployeeEntity.getUsername(), restaurantEmployees.get(0).getUsername());
@@ -43,15 +45,17 @@ public class RestaurantEmployeeRepositoryTests {
 
     @Test
     public void getRestaurantEmployeeById() {
-
+        // Arrange
         // Creating object that can generate fake data and persisting a restaurant employee object
         Faker faker = new Faker();
         Restaurant restaurantEntity = peristRestaurant(faker);
         RestaurantEmployee restaurantEmployeeEntity = persistRestaurantEmployee(restaurantEntity);
 
+        // Act
         // Getting the restaurant employee object from the DB by the restaurant employee id
         Optional<RestaurantEmployee> restaurantEmployee = restaurantEmployeeRepository.findById(restaurantEmployeeEntity.getId());
 
+        // Assert
         // Asserting that the restaurant employee object is present and that the username is correct
         assertTrue(restaurantEmployee.isPresent());
         assertEquals(restaurantEmployeeEntity.getUsername(), restaurantEmployee.get().getUsername());
@@ -59,21 +63,24 @@ public class RestaurantEmployeeRepositoryTests {
 
     @Test
     public void getRestaurantEmployeeByUsername() {
-
+        // Arrange
         // Creating object that can generate fake data and persisting a restaurant employee object
         Faker faker = new Faker();
         Restaurant restaurantEntity = peristRestaurant(faker);
         RestaurantEmployee restaurantEmployeeEntity = persistRestaurantEmployee(restaurantEntity);
 
+        // Act
         // Getting the restaurant employee object from the DB by the restaurant employee username
         Optional<RestaurantEmployee> restaurantEmployee = restaurantEmployeeRepository.findByUsername(restaurantEmployeeEntity.getUsername());
 
+        // Assert
         // Asserting that the restaurant employee object is present and that the username is correct
         assertTrue(restaurantEmployee.isPresent());
         assertEquals(restaurantEmployeeEntity.getUsername(), restaurantEmployee.get().getUsername());
     }
 
     private Restaurant peristRestaurant(Faker faker) {
+        // Arrange
         // Creating a restaurant object with a random restaurant name and saving it in the DB
         Restaurant restaurant = new Restaurant(faker.restaurant().name());
 
@@ -81,6 +88,7 @@ public class RestaurantEmployeeRepositoryTests {
     }
 
     private RestaurantEmployee persistRestaurantEmployee(Restaurant restaurantEntity) {
+        // Arrange
         // Creating a restaurant employee object with a random name and the restaurant object created above and saving it in the DB
         RestaurantEmployee restaurantEmployee = new RestaurantEmployee("employee_user", "password", restaurantEntity);
 

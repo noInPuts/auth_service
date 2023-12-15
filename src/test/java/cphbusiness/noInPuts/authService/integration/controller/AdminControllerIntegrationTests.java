@@ -1,4 +1,4 @@
-package cphbusiness.noInPuts.authService.unit.controller;
+package cphbusiness.noInPuts.authService.integration.controller;
 
 import cphbusiness.noInPuts.authService.model.Admin;
 import cphbusiness.noInPuts.authService.repository.AdminRepository;
@@ -29,10 +29,12 @@ public class AdminControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnWithID() throws Exception {
+        // Arrange
         // Creating an admin user and saving it to the database
         Admin adminUser = new Admin("admin", argon2PasswordEncoder.encode("Password1!"));
         adminRepository.save(adminUser);
 
+        // Act and Assert
         // Sending a post request to the login endpoint with the admin user credentials
         this.mockMvc.perform(post("/api/admin/login").content("{ \"username\": \"admin\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
@@ -43,6 +45,7 @@ public class AdminControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnBadRequestWhenUsernameIsBlank() throws Exception {
+        // Act and Assert
         // Sending a post request to the login endpoint with a blank username
         this.mockMvc.perform(post("/api/admin/login").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -50,6 +53,7 @@ public class AdminControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnUnsupportedMediaTypeWhenNotParsingJson() throws Exception {
+        // Act and Assert
         // Sending a post request to the login endpoint with wrong content type
         this.mockMvc.perform(post("/api/admin/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
@@ -57,10 +61,12 @@ public class AdminControllerIntegrationTests {
 
     @Test
     public void loginShouldReturnBadRequestWhenCredentialsAreWrong() throws Exception {
+        // Arrange
         // Creating an admin user and saving it to the database
         Admin adminUser = new Admin("admin", argon2PasswordEncoder.encode("Password1!"));
         adminRepository.save(adminUser);
 
+        // Act and Assert
         // Sending a post request to the login endpoint with the wrong password
         this.mockMvc.perform(post("/api/admin/login").content("{ \"username\": \"\", \"password\": \"Password2!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());

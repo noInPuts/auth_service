@@ -35,12 +35,15 @@ public class RestaurantEmployeeServiceTests {
 
     @Test
     public void loginShouldReturnEmployeeObject() throws UserDoesNotExistException, WrongCredentialsException {
+        // Arrange
         // Mocking RestaurantEmployeeRepository
         Map<String, String> userAndRestaurantInfo = mockRestaurantEmployeeRepository();
 
+        // Act
         // Calling the login method with the restaurant employee user credentials
         RestaurantEmployeeDTO restaurantEmployee = restaurantEmployeeService.login(userAndRestaurantInfo.get("username"), userAndRestaurantInfo.get("password"));
 
+        // Assert
         // Asserting that the restaurant employee is not null and that the username and restaurant name is correct
         assertEquals(restaurantEmployee.getUsername(), userAndRestaurantInfo.get("username"));
         assertNull(restaurantEmployee.getPassword());
@@ -49,6 +52,7 @@ public class RestaurantEmployeeServiceTests {
 
     @Test
     public void loginShouldThrowUserNotFoundExceptionWhenNoUserIsExistsInDB() {
+        // Act and Assert
         // Asserting that the login method throws UserDoesNotExistException when no user is found in the DB
         assertThrows(UserDoesNotExistException.class, () -> {
             restaurantEmployeeService.login("employee_user", "employee_pass");
@@ -57,9 +61,11 @@ public class RestaurantEmployeeServiceTests {
 
     @Test
     public void loginShouldThrowWrongCredentianlsWhenWrongPasswordIsProvided() {
+        // Arrange
         // Mocking RestaurantEmployeeRepository
         Map<String, String> userCredentials = mockRestaurantEmployeeRepository();
 
+        // Act and Assert
         // Asserting that the login method throws WrongCredentialsException when wrong password is provided
         assertThrows(WrongCredentialsException.class, () -> {
             restaurantEmployeeService.login(userCredentials.get("username"), "wrong_password");
@@ -67,6 +73,7 @@ public class RestaurantEmployeeServiceTests {
     }
 
     private Map<String, String> mockRestaurantEmployeeRepository() {
+        // Arrange
         // Generating fake data and mocking the RestaurantEmployeeRepository
         Faker faker = new Faker();
         String username = "employee_user";

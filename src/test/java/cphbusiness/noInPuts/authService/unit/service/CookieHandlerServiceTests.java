@@ -16,8 +16,10 @@ public class CookieHandlerServiceTests {
 
     @Test
     public void createAuthCookieTest() {
+        // Act
         Cookie authCookie = cookieHandlerService.getAuthCookie("dummyToken");
 
+        // Assert
         // Asserting Cookie
         assertEquals("jwt-token", authCookie.getName());
         assertEquals("dummyToken", authCookie.getValue());
@@ -30,8 +32,10 @@ public class CookieHandlerServiceTests {
 
     @Test
     public void createLoginCookieTest() {
+        // Act
         Cookie loginCookie = cookieHandlerService.getLoginStatusCookie();
 
+        // Assert
         // Asserting Cookie
         assertEquals("login-status", loginCookie.getName());
         assertEquals("true", loginCookie.getValue());
@@ -44,8 +48,10 @@ public class CookieHandlerServiceTests {
 
     @Test
     public void logoutCookie() {
+        // Act
         Cookie logoutCookie = cookieHandlerService.getLogoutStatusCookie();
 
+        // Assert
         // Asserting Cookie
         assertEquals("login-status", logoutCookie.getName());
         assertNull(logoutCookie.getValue());
@@ -54,8 +60,10 @@ public class CookieHandlerServiceTests {
 
     @Test
     public void deleteAuthCookie() {
+        // Act
         Cookie deleteAuthCookie = cookieHandlerService.getDeleteAuthCookie();
 
+        // Assert
         // Asserting Cookie
         assertEquals("jwt-token", deleteAuthCookie.getName());
         assertNull(deleteAuthCookie.getValue());

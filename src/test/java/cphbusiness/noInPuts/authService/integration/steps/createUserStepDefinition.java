@@ -37,6 +37,7 @@ public class createUserStepDefinition extends CucumberIntegrationTest {
 
     @When("I make a POST request to {string} with the following body:")
     public void i_make_a_post_request_to_with_the_following_body_parameters(String endpoint, DataTable dataTable) throws Exception {
+        // Act
         // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
@@ -48,6 +49,7 @@ public class createUserStepDefinition extends CucumberIntegrationTest {
 
     @Then("a user is created in the database with the following properties:")
     public void a_user_is_created_in_the_database_with_the_following_properties(io.cucumber.datatable.DataTable dataTable) {
+        // Assert
         // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
@@ -66,6 +68,7 @@ public class createUserStepDefinition extends CucumberIntegrationTest {
 
     @When("I make a request to {string} with the following body:")
     public void i_make_a_request_to_with_the_following_body(String endpoint, DataTable dataTable) throws Exception {
+        // Act
         // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
@@ -76,6 +79,7 @@ public class createUserStepDefinition extends CucumberIntegrationTest {
 
     @Then("A user is not created in the database with the following properties:")
     public void a_user_is_not_created_in_the_database_with_the_following_properties(io.cucumber.datatable.DataTable dataTable) {
+        // Assert
         // Converting the DataTable to a List of Maps
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 

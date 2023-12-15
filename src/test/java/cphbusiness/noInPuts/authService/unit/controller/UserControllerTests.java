@@ -41,6 +41,7 @@ public class UserControllerTests {
 
     @BeforeEach
     public void mockUserServiceAndJwtService() throws UserAlreadyExistsException, WrongCredentialsException, WeakPasswordException, UserDoesNotExistException {
+        // Arrange
         // Mocking serviceFacade
         Cookie jwtCookie = new Cookie("jwt-token", "dummyToken");
         Cookie loginCookie = new Cookie("login-status", "true");
@@ -52,6 +53,7 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturnUserWithID() throws Exception {
+        // Act and Assert
         // Sending a post request to the create endpoint with the user credentials
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isCreated())
@@ -62,6 +64,7 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn400BadRequestWhenParsingBadRequest() throws Exception {
+        // Act and Assert
         // Sending a post request with missing entry
         this.mockMvc.perform(post("/api/user/create").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -69,6 +72,7 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn415UnsupportedeMediaTypeWhenParsingInvalidJson() throws Exception {
+        // Act and Assert
         // Sending a post request to the create endpoint with wrong content type
         this.mockMvc.perform(post("/api/user/create").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
@@ -76,6 +80,7 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn400BadRequestWhenParsingEmptyUsername() throws Exception {
+        // Act and Assert
         // Sending a post request to the create endpoint with a blank username
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -83,6 +88,7 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn400BadRequestWhenParsingEmptyPassword() throws Exception {
+        // Act and Assert
         // Sending a post request to the create endpoint with a blank password
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"user_test\", \"password\": \"\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -90,9 +96,11 @@ public class UserControllerTests {
 
     @Test
     public void createUserShouldReturn409ConflictWhenUsernameAlreadyExists() throws Exception {
+        // Arrange
         // Mocking the serviceFacade
         when(serviceFacade.userCreateAccount(any(String.class), any(String.class))).thenThrow(new UserAlreadyExistsException("Username already exists."));
 
+        // Act and Assert
         // Sending a post request to the create endpoint with the same user credentials
         this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isConflict());
@@ -100,6 +108,7 @@ public class UserControllerTests {
 
     @Test
     public void loginShouldReturnUserWithID() throws Exception {
+        // Act and Assert
         // Sending a post request to the login endpoint with the user credentials
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
@@ -109,9 +118,11 @@ public class UserControllerTests {
 
     @Test
     public void loginShouldReturn401UnauthorizedWhenParsingWrongUserCredentianls() throws Exception {
+        // Arrange
         // Mocking the serviceFacade
         when(serviceFacade.userLogin(any(String.class), any(String.class))).thenThrow(new WrongCredentialsException("Wrong password."));
 
+        // Act and Assert
         // Sending a post request to the login endpoint with the wrong user credentials
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());
@@ -119,9 +130,11 @@ public class UserControllerTests {
 
     @Test
     public void loginShouldReturn401UnauthorizedWhenUserDoesNotExists() throws Exception {
+        // Arrange
         // Mocking the userService and jwtService
         when(serviceFacade.userLogin(any(String.class), any(String.class))).thenThrow(new UserDoesNotExistException("User is not found in the db"));
 
+        // Act and Assert
         // Sending a post request to the login endpoint with wrong username
         this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());
@@ -129,6 +142,7 @@ public class UserControllerTests {
 
     @Test
     public void loginShouldReturn400BadRequestWhenParsingBadRequest() throws Exception {
+        // Act and Assert
         // Sending a post request to the login endpoint with missing entry
         this.mockMvc.perform(post("/api/user/login").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -136,6 +150,7 @@ public class UserControllerTests {
 
     @Test
     public void loginShouldReturn415UnsupportedeMediaTypeWhenParsingInvalidJson() throws Exception {
+        // Act and Assert
         // Sending a post request to the login endpoint with wrong content type
         this.mockMvc.perform(post("/api/user/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
@@ -143,6 +158,7 @@ public class UserControllerTests {
 
     @Test
     public void logoutShouldReturnBadRequestWhenNotParsingJWTToken() throws Exception {
+        // Act and Assert
         // Sending a post request to the logout endpoint with wrong content type
         this.mockMvc.perform(post("/api/user/logout").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -150,14 +166,14 @@ public class UserControllerTests {
 
     @Test
     public void logout() throws Exception {
-        // Mocking serviceFacade logout method
+        // Act
+        // Mocking serviceFacade logout method and creating dummy cookie
         Cookie jwtCookie = new Cookie("jwt-token", "dummyToken");
         Cookie loginStatusCookie = new Cookie("login-status", null);
         when(serviceFacade.userLogout(any(String.class))).thenReturn(new UserLogoutDTO(jwtCookie, loginStatusCookie));
-
-        // Creating a dummy cookie
         Cookie cookie = new Cookie("jwt-token", "dummyToken");
 
+        // Act and Assert
         // Sending a post request to the logout endpoint with the cookie
         this.mockMvc.perform(post("/api/user/logout").cookie(cookie))
                 .andExpect(status().isOk());
