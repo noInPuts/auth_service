@@ -40,7 +40,7 @@ public class CookieHandlerServiceTests {
         assertEquals("login-status", loginCookie.getName());
         assertEquals("true", loginCookie.getValue());
         assertEquals(24*60*60, loginCookie.getMaxAge());
-        assertTrue(loginCookie.isHttpOnly());
+        assertFalse(loginCookie.isHttpOnly());
         assertTrue(loginCookie.getSecure());
         assertEquals("Strict", loginCookie.getAttribute("SameSite"));
         assertEquals("/", loginCookie.getPath());
