@@ -17,7 +17,7 @@ public class CookieHandlerServiceImpl implements CookieHandlerService {
         Cookie cookie = setCookieAttributes(new Cookie("login-status", "true"));
         cookie.setHttpOnly(false);
 
-        return setCookieAttributes(cookie);
+        return cookie;
     }
 
     @Override
