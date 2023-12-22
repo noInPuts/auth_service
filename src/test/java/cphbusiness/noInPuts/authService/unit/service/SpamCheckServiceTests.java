@@ -1,7 +1,8 @@
-package cphbusiness.noInPuts.authService.service;
+package cphbusiness.noInPuts.authService.unit.service;
 
 import cphbusiness.noInPuts.authService.model.SpamCheck;
 import cphbusiness.noInPuts.authService.repository.SpamCheckRepository;
+import cphbusiness.noInPuts.authService.service.SpamCheckServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
