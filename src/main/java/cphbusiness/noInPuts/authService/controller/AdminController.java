@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(maxAge = 3600)
-@RestController
+@RestController("/api/auth/admin")
 public class AdminController {
 
     private final ServiceFacade serviceFacade;
@@ -25,7 +25,7 @@ public class AdminController {
     }
 
     // Endpoint for logging in to an admin account
-    @PostMapping(value = "/api/admin/login", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AdminDTO> login(@Valid @RequestBody AdminDTO postAdminDTO, HttpServletResponse servletResponse) {
 

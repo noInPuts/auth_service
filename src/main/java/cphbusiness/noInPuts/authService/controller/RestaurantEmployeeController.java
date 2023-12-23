@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController("/api/auth/restaurantEmployee")
 @CrossOrigin(maxAge = 3600)
 public class RestaurantEmployeeController {
 
@@ -24,7 +24,7 @@ public class RestaurantEmployeeController {
     }
 
     // Endpoint for logging in to a restaurant employee account
-    @PostMapping(value = "/api/restaurantEmployee/login", produces = "application/json", consumes = "application/json")
+    @PostMapping(value = "/login", produces = "application/json", consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<RestaurantEmployeeDTO> login(@Valid @RequestBody RestaurantEmployeeDTO postRestaurantEmployeeDTO, HttpServletResponse servletResponse) {
 

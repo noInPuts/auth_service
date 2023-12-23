@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://167.71.45.53:3000"}, maxAge = 3600, allowCredentials = "true")
-@RestController
+@RestController("/api/auth/user")
 public class UserController {
 
     private final ServiceFacade serviceFacade;
@@ -26,7 +26,7 @@ public class UserController {
     }
 
     // Endpoint for creating a user account
-    @PostMapping(value = "/api/user/create", produces = "application/json", consumes = "application/json")
+    @PostMapping(value = "/create", produces = "application/json", consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse) {
 
@@ -49,7 +49,7 @@ public class UserController {
     }
 
     // Endpoint for logging in to a user account
-    @PostMapping(value = "/api/user/login", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<UserDTO> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse, HttpServletRequest servletRequest) {
 
@@ -72,7 +72,7 @@ public class UserController {
         return new ResponseEntity<>(userLoginDTO.getUser(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/api/user/logout")
+    @PostMapping(value = "/logout")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> logout(@Valid @CookieValue("jwt-token") String jwtToken, HttpServletResponse servletResponse) {
 
