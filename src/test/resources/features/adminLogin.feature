@@ -1,7 +1,7 @@
 Feature: Login feature for admin
   Scenario: Admin login with valid credentials
     Given I have an admin account in the DB with username "admin" and password "PassWord!1"
-    When I make a admin login POST request to "/api/admin/login" with the following body
+    When I make a admin login POST request to "/api/auth/admin/login" with the following body
       """
       {
         "username": "admin",

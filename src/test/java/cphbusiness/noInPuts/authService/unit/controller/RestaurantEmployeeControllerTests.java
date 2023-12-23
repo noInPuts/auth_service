@@ -39,7 +39,7 @@ public class RestaurantEmployeeControllerTests {
 
         // Act and Assert
         // Sending a post request to the login endpoint with the employee user credentials
-        this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{ \"username\": \"employee_user\", \"password\": null}"))
                 .andExpect(cookie().exists("jwt-token"));
@@ -49,7 +49,7 @@ public class RestaurantEmployeeControllerTests {
     public void loginShouldReturn400BadRequestWhenParsingBadRequest() throws Exception {
         // Act and Assert
         // Sending a post request with missing entry
-        this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/restaurantEmployee/login").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -62,7 +62,7 @@ public class RestaurantEmployeeControllerTests {
 
         // Act and Assert
         // Sending a post request to the login endpoint with the wrong employee user credentials
-        this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -74,7 +74,7 @@ public class RestaurantEmployeeControllerTests {
 
         // Act and Assert
         // Sending a post request to the login endpoint with wrong username and password
-        this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 }
