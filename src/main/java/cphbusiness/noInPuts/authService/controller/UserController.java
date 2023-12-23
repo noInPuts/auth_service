@@ -15,7 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://167.71.45.53:3000"}, maxAge = 3600, allowCredentials = "true")
-@RestController("/api/auth/user")
+@RestController
+@RequestMapping("/api/auth/user")
 public class UserController {
 
     private final ServiceFacade serviceFacade;

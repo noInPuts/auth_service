@@ -14,7 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(maxAge = 3600)
-@RestController("/api/auth/admin")
+@RestController
+@RequestMapping("/api/auth/admin")
 public class AdminController {
 
     private final ServiceFacade serviceFacade;

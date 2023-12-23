@@ -51,7 +51,7 @@ public class RestaurantEmployeeControllerIntegrationTests {
     public void loginShouldReturnWithID() throws Exception {
         // Act and Assert
         // Sending a post request to the login endpoint with the employee user credentials
-        this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{ \"id\":1,\"username\":\"employee_user\", \"password\": null}"))
@@ -62,7 +62,7 @@ public class RestaurantEmployeeControllerIntegrationTests {
     public void loginShouldReturnBadRequestWhenUsernameIsBlank() throws Exception {
         // Act and Assert
         // Sending a post request to the login endpoint with a blank username
-        this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/restaurantEmployee/login").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -70,7 +70,7 @@ public class RestaurantEmployeeControllerIntegrationTests {
     public void loginShouldReturnUnsupportedMediaTypeWhenNotParsingJson() throws Exception {
         // Act and Assert
         // Sending a post request to the login endpoint with wrong content type
-        this.mockMvc.perform(post("/api/restaurantEmployee/login").content("not json").characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/restaurantEmployee/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
     }
 
@@ -78,7 +78,7 @@ public class RestaurantEmployeeControllerIntegrationTests {
     public void loginShouldReturnBadRequestWhenCredentialsAreWrong() throws Exception {
         // Act and Assert
         // Sending a post request to the login endpoint with the wrong password
-        this.mockMvc.perform(post("/api/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password2!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/restaurantEmployee/login").content("{ \"username\": \"employee_user\", \"password\": \"Password2!\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 }

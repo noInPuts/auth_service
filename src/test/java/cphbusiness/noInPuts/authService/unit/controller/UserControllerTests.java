@@ -55,7 +55,7 @@ public class UserControllerTests {
     public void createUserShouldReturnUserWithID() throws Exception {
         // Act and Assert
         // Sending a post request to the create endpoint with the user credentials
-        this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{\"id\":1,\"username\":\"test_user\", \"password\": null}"))
@@ -66,7 +66,7 @@ public class UserControllerTests {
     public void createUserShouldReturn400BadRequestWhenParsingBadRequest() throws Exception {
         // Act and Assert
         // Sending a post request with missing entry
-        this.mockMvc.perform(post("/api/user/create").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/create").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -74,7 +74,7 @@ public class UserControllerTests {
     public void createUserShouldReturn415UnsupportedeMediaTypeWhenParsingInvalidJson() throws Exception {
         // Act and Assert
         // Sending a post request to the create endpoint with wrong content type
-        this.mockMvc.perform(post("/api/user/create").content("not json").characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/create").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
     }
 
@@ -82,7 +82,7 @@ public class UserControllerTests {
     public void createUserShouldReturn400BadRequestWhenParsingEmptyUsername() throws Exception {
         // Act and Assert
         // Sending a post request to the create endpoint with a blank username
-        this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/create").content("{ \"username\": \"\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -90,7 +90,7 @@ public class UserControllerTests {
     public void createUserShouldReturn400BadRequestWhenParsingEmptyPassword() throws Exception {
         // Act and Assert
         // Sending a post request to the create endpoint with a blank password
-        this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"user_test\", \"password\": \"\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/create").content("{ \"username\": \"user_test\", \"password\": \"\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -102,7 +102,7 @@ public class UserControllerTests {
 
         // Act and Assert
         // Sending a post request to the create endpoint with the same user credentials
-        this.mockMvc.perform(post("/api/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isConflict());
     }
 
@@ -110,7 +110,7 @@ public class UserControllerTests {
     public void loginShouldReturnUserWithID() throws Exception {
         // Act and Assert
         // Sending a post request to the login endpoint with the user credentials
-        this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{\"id\":1,\"username\":\"test_user\", \"password\": null}"));
@@ -124,7 +124,7 @@ public class UserControllerTests {
 
         // Act and Assert
         // Sending a post request to the login endpoint with the wrong user credentials
-        this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -136,7 +136,7 @@ public class UserControllerTests {
 
         // Act and Assert
         // Sending a post request to the login endpoint with wrong username
-        this.mockMvc.perform(post("/api/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -144,7 +144,7 @@ public class UserControllerTests {
     public void loginShouldReturn400BadRequestWhenParsingBadRequest() throws Exception {
         // Act and Assert
         // Sending a post request to the login endpoint with missing entry
-        this.mockMvc.perform(post("/api/user/login").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -152,7 +152,7 @@ public class UserControllerTests {
     public void loginShouldReturn415UnsupportedeMediaTypeWhenParsingInvalidJson() throws Exception {
         // Act and Assert
         // Sending a post request to the login endpoint with wrong content type
-        this.mockMvc.perform(post("/api/user/login").content("not json").characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/login").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isUnsupportedMediaType());
     }
 
@@ -160,7 +160,7 @@ public class UserControllerTests {
     public void logoutShouldReturnBadRequestWhenNotParsingJWTToken() throws Exception {
         // Act and Assert
         // Sending a post request to the logout endpoint with wrong content type
-        this.mockMvc.perform(post("/api/user/logout").content("not json").characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/logout").content("not json").characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -175,7 +175,7 @@ public class UserControllerTests {
 
         // Act and Assert
         // Sending a post request to the logout endpoint with the cookie
-        this.mockMvc.perform(post("/api/user/logout").cookie(cookie))
+        this.mockMvc.perform(post("/api/auth/user/logout").cookie(cookie))
                 .andExpect(status().isOk());
     }
 
