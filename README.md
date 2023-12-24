@@ -1,6 +1,11 @@
 # Auth Service
 This service is for authentication of customers, admin and restaurant employees. 
 
+## Functionality
+- Create user
+- User login
+- User logout
+
 ## Architecture 
 This project is build with REST, N-layered architecture and N-tier architecture. We have implemented 3 layers within our microservice: Controller, Service and Repository. 
 
