@@ -8,9 +8,9 @@ This project is build with REST, N-layered architecture and N-tier architecture.
 We are using JWT Tokens For authenticating customers, admin and restaurant employees. JWT Tokens are stored in the Cookies. Passwords are hashed with Argon2.
 
 ## Tech Stack
-Spring Boot
-Argon2
-JJWT (JWT)
-Cucumber
-Datafaker 
-PostgreSQL
+- Spring Boot
+- Argon2
+- JJWT (JWT)
+- Cucumber
+- Datafaker 
+- PostgreSQL
