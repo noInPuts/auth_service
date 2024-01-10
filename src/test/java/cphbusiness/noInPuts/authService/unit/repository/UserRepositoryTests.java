@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest
-@ActiveProfiles("testcontainer-flyway")
 public class UserRepositoryTests {
 
     @Autowired
@@ -24,7 +23,7 @@ public class UserRepositoryTests {
     public void saveUserTest() {
         // Act
         // Creating an admin user and saving it to the database
-        User user = userRepository.save(new User("test_user", "password"));
+        User user = userRepository.save(new User("test_user", "password", "email@email.com"));
 
         // Assert
         // Asserting that the admin user is not null and that the username and password is correct
@@ -37,7 +36,7 @@ public class UserRepositoryTests {
     public void getUserShouldReturnOptionalOfUser() {
         // Arrange
         // Creating an admin user and saving it to the database
-        userRepository.save(new User("test_user", "password"));
+        userRepository.save(new User("test_user", "password", "email@email.com"));
 
         // Act
         // Getting the user from the database by the username

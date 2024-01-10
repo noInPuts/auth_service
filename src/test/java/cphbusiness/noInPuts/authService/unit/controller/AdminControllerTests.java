@@ -6,6 +6,7 @@ import cphbusiness.noInPuts.authService.dto.AdminLoginDTO;
 import cphbusiness.noInPuts.authService.exception.UserDoesNotExistException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
 import cphbusiness.noInPuts.authService.facade.ServiceFacade;
+import cphbusiness.noInPuts.authService.service.RabbitMessagePublisher;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

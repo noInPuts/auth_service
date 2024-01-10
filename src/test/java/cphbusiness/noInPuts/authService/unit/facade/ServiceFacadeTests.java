@@ -26,6 +26,9 @@ public class ServiceFacadeTests {
     private JwtService jwtService;
 
     @MockBean
+    private RabbitMessagePublisher rabbitMessagePublisher;
+
+    @MockBean
     private CookieHandlerService cookieHandlerService;
 
     @MockBean
@@ -92,11 +95,11 @@ public class ServiceFacadeTests {
     public void createUserAccountTest() throws UserAlreadyExistsException, WeakPasswordException {
         // Arrange
         // Mocking the userService
-        when(userService.createUser(any(String.class), any(String.class))).thenReturn(new UserDTO(1L, "user"));
+        when(userService.createUser(any(String.class), any(String.class), any(String.class))).thenReturn(new UserDTO(1L, "user"));
         when(cookieHandlerService.getLoginStatusCookie()).thenReturn(new Cookie("login-status", "true"));
 
         // Act
-        UserCreateDTO userCreateDTO = serviceFacade.userCreateAccount("user", "Password1!");
+        UserCreateDTO userCreateDTO = serviceFacade.userCreateAccount("user", "Password1!", "email@email.com");
         Cookie jwtCookie = userCreateDTO.getJwtCookie();
         Cookie loginCookie = userCreateDTO.getLoginCookie();
 

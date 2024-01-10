@@ -11,6 +11,9 @@ public class UserDTO {
     @NotBlank(message = "Password is mandatory")
     private String password;
 
+    @NotBlank(message = "Email is mandatory")
+    private String email;
+
     public UserDTO() {
     }
 
@@ -22,6 +25,19 @@ public class UserDTO {
     public UserDTO(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public UserDTO(long id, String username, String password, String email) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    public UserDTO(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
     public long getId() {
@@ -42,5 +58,17 @@ public class UserDTO {
 
     public String getPassword() {
         return this.password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

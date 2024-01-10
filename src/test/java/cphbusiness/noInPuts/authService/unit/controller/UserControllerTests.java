@@ -11,6 +11,7 @@ import cphbusiness.noInPuts.authService.exception.WeakPasswordException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
 import cphbusiness.noInPuts.authService.facade.ServiceFacade;
 import cphbusiness.noInPuts.authService.service.JwtService;
+import cphbusiness.noInPuts.authService.service.RabbitMessagePublisher;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,14 +49,14 @@ public class UserControllerTests {
         UserDTO user = new UserDTO(1, "test_user");
 
         when(serviceFacade.userLogin(any(String.class), any(String.class))).thenReturn(new UserLoginDTO(jwtCookie, loginCookie, user));
-        when(serviceFacade.userCreateAccount(any(String.class), any(String.class))).thenReturn(new UserCreateDTO(jwtCookie, loginCookie, user));
+        when(serviceFacade.userCreateAccount(any(String.class), any(String.class), any(String.class))).thenReturn(new UserCreateDTO(jwtCookie, loginCookie, user));
     }
 
     @Test
     public void createUserShouldReturnUserWithID() throws Exception {
         // Act and Assert
         // Sending a post request to the create endpoint with the user credentials
-        this.mockMvc.perform(post("/api/auth/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\", \"email\": \"email@email.com\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{\"id\":1,\"username\":\"test_user\", \"password\": null}"))
@@ -98,11 +99,11 @@ public class UserControllerTests {
     public void createUserShouldReturn409ConflictWhenUsernameAlreadyExists() throws Exception {
         // Arrange
         // Mocking the serviceFacade
-        when(serviceFacade.userCreateAccount(any(String.class), any(String.class))).thenThrow(new UserAlreadyExistsException("Username already exists."));
+        when(serviceFacade.userCreateAccount(any(String.class), any(String.class), any(String.class))).thenThrow(new UserAlreadyExistsException("Username already exists."));
 
         // Act and Assert
         // Sending a post request to the create endpoint with the same user credentials
-        this.mockMvc.perform(post("/api/auth/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/create").content("{ \"username\": \"test_user\", \"password\": \"Password1!\", \"email\": \"email@email.com\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isConflict());
     }
 
@@ -110,7 +111,7 @@ public class UserControllerTests {
     public void loginShouldReturnUserWithID() throws Exception {
         // Act and Assert
         // Sending a post request to the login endpoint with the user credentials
-        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\", \"email\": \"email@email.com\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{\"id\":1,\"username\":\"test_user\", \"password\": null}"));
@@ -124,7 +125,7 @@ public class UserControllerTests {
 
         // Act and Assert
         // Sending a post request to the login endpoint with the wrong user credentials
-        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\", \"email\": \"email@email.com\"  }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -136,7 +137,7 @@ public class UserControllerTests {
 
         // Act and Assert
         // Sending a post request to the login endpoint with wrong username
-        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post("/api/auth/user/login").content("{ \"username\": \"test_user\", \"password\": \"Password1!\", \"email\": \"email@email.com\" }").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());
     }
 

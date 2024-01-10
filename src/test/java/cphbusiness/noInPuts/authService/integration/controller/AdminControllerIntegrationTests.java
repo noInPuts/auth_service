@@ -2,10 +2,12 @@ package cphbusiness.noInPuts.authService.integration.controller;
 
 import cphbusiness.noInPuts.authService.model.Admin;
 import cphbusiness.noInPuts.authService.repository.AdminRepository;
+import cphbusiness.noInPuts.authService.service.RabbitMessagePublisher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
@@ -18,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ActiveProfiles("testcontainer-flyway")
 public class AdminControllerIntegrationTests {
 
     @Autowired
@@ -26,6 +27,9 @@ public class AdminControllerIntegrationTests {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @MockBean
+    private RabbitMessagePublisher rabbitMessagePublisher;
 
     private final Argon2PasswordEncoder argon2PasswordEncoder = new Argon2PasswordEncoder(16, 32, 1, 128 * 1024, 5);
 

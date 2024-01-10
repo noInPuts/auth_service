@@ -3,11 +3,13 @@ package cphbusiness.noInPuts.authService.integration.steps;
 import cphbusiness.noInPuts.authService.integration.CucumberIntegrationTest;
 import cphbusiness.noInPuts.authService.model.User;
 import cphbusiness.noInPuts.authService.repository.UserRepository;
+import cphbusiness.noInPuts.authService.service.RabbitMessagePublisher;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -42,7 +44,7 @@ public class createUserStepDefinition extends CucumberIntegrationTest {
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
         // Making a POST request to the createUser endpoint with the user credentials
-        this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") + "\"}").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") + "\", \"email\": \"email@email.com\"}").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andExpect(status().isCreated());
 
     }
@@ -73,7 +75,7 @@ public class createUserStepDefinition extends CucumberIntegrationTest {
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
         // Making a POST request to the createUser endpoint with the user credentials
-        result = this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") + "\"}").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
+        result = this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") + "\", \"email\": \"email@email.com\"}").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8"))
                 .andReturn();
     }
 

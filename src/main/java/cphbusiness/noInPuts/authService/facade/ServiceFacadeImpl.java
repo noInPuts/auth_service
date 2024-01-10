@@ -17,15 +17,17 @@ public class ServiceFacadeImpl implements ServiceFacade {
     private final RestaurantEmployeeService restaurantEmployeeService;
     private final CookieHandlerService cookieHandlerService;
     private final SpamCheckServiceImpl spamCheckServiceImpl;
+    private final RabbitMessagePublisher rabbitMessagePublisher;
 
     @Autowired
-    public ServiceFacadeImpl(SpamCheckServiceImpl spamCheckServiceImpl, AdminService adminService, UserService userService, JwtService jwtService, RestaurantEmployeeService restaurantEmployeeService, CookieHandlerService cookieHandlerService) {
+    public ServiceFacadeImpl(SpamCheckServiceImpl spamCheckServiceImpl, AdminService adminService, UserService userService, JwtService jwtService, RestaurantEmployeeService restaurantEmployeeService, CookieHandlerService cookieHandlerService, RabbitMessagePublisher rabbitMessagePublisher) {
         this.adminService = adminService;
         this.userService = userService;
         this.jwtService = jwtService;
         this.restaurantEmployeeService = restaurantEmployeeService;
         this.cookieHandlerService = cookieHandlerService;
         this.spamCheckServiceImpl = spamCheckServiceImpl;
+        this.rabbitMessagePublisher = rabbitMessagePublisher;
     }
 
 
@@ -60,10 +62,10 @@ public class ServiceFacadeImpl implements ServiceFacade {
     }
 
     @Override
-    public UserCreateDTO userCreateAccount(String username, String password) throws UserAlreadyExistsException, WeakPasswordException {
+    public UserCreateDTO userCreateAccount(String username, String password, String email) throws UserAlreadyExistsException, WeakPasswordException {
 
         // Creates user and returns userDTO
-        UserDTO userDTO = userService.createUser(username, password);
+        UserDTO userDTO = userService.createUser(username, password, email);
 
         // Create a JWT Cookie
         String jwtToken = jwtService.tokenGenerator(userDTO.getId(), userDTO.getUsername(), "user");
@@ -71,6 +73,9 @@ public class ServiceFacadeImpl implements ServiceFacade {
 
         // Create a Login Cookie
         Cookie loginCookie = cookieHandlerService.getLoginStatusCookie();
+
+        // Send email (RabbitMQ -> Camel Service -> Email Service)
+        rabbitMessagePublisher.sendEmail(email, "Creation of User Account", "Your account has been created!");
 
         return new UserCreateDTO(jwtCookie, loginCookie, userDTO);
     }

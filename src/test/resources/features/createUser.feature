@@ -7,7 +7,7 @@ Feature: Creating a new user account
       | my_user  | ThisIsMyPassword!1 |
     Then a user is created in the database with the following properties:
       | username | id | password           |
-      | my_user  | 1  | ThisIsMyPassword!1 |
+      | my_user  | 2  | ThisIsMyPassword!1 |
 
   Scenario: User account creation with weak password
     Given I want to create a user with username as "my_user" and the weak password as "weak"
@@ -16,4 +16,4 @@ Feature: Creating a new user account
       | my_user  | weak     |
     Then A user is not created in the database with the following properties:
       | username | id | password |
-      | my_user  | 1  | weak     |
+      | my_user  | 2  | weak     |

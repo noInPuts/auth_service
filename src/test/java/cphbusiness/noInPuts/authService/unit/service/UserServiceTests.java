@@ -7,6 +7,7 @@ import cphbusiness.noInPuts.authService.exception.WeakPasswordException;
 import cphbusiness.noInPuts.authService.exception.WrongCredentialsException;
 import cphbusiness.noInPuts.authService.model.User;
 import cphbusiness.noInPuts.authService.repository.UserRepository;
+import cphbusiness.noInPuts.authService.service.DataInitializerService;
 import cphbusiness.noInPuts.authService.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class UserServiceTests {
     @MockBean
     private UserRepository userRepository;
 
+    @MockBean
+    private DataInitializerService dataInitializerService;
+
     private final Argon2PasswordEncoder argon2PasswordEncoder = new Argon2PasswordEncoder(16, 32, 1, 128 * 1024, 5);
 
     @Test
@@ -43,7 +47,7 @@ public class UserServiceTests {
         // Act
         // Calling the createUser method with the userDTO
         String username = "test_user";
-        UserDTO createdUserDTO = userService.createUser(username, "Password1!");
+        UserDTO createdUserDTO = userService.createUser(username, "Password1!", "email@email.com");
 
         // Assert
         // Asserting that the createdUserDTO is not null and that the username and id is correct
@@ -60,14 +64,14 @@ public class UserServiceTests {
 
         // Act and Assert
         // Assert that the createUser method throws UserAlreadyExistsException when the user already exists
-        assertThrows(UserAlreadyExistsException.class, () -> userService.createUser("test_user", "Password1!"));
+        assertThrows(UserAlreadyExistsException.class, () -> userService.createUser("test_user", "Password1!", "email@email.com"));
     }
 
     @Test
     public void createUserShouldThrowExceptionWhenPasswordIsToWeak() {
         // Act and Assert
         // Assert that the createUser method throws WeakPasswordException when the password is to weak
-        assertThrows(WeakPasswordException.class, () -> userService.createUser("test_user", "weak"));
+        assertThrows(WeakPasswordException.class, () -> userService.createUser("test_user", "weak", "email@email.com"));
     }
 
     @Test

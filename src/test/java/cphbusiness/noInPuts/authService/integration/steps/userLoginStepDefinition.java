@@ -3,6 +3,7 @@ package cphbusiness.noInPuts.authService.integration.steps;
 import cphbusiness.noInPuts.authService.integration.CucumberIntegrationTest;
 import cphbusiness.noInPuts.authService.model.User;
 import cphbusiness.noInPuts.authService.repository.UserRepository;
+import cphbusiness.noInPuts.authService.service.RabbitMessagePublisher;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -10,6 +11,7 @@ import io.cucumber.java.en.When;
 import jakarta.servlet.http.Cookie;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,7 +43,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
     public void i_want_to_login_onto_the_test_user(String username, String password) {
         // Arrange
         // Creating a user and saving it to the database
-        User user = new User(username, argon2PasswordEncoder.encode(password));
+        User user = new User(username, argon2PasswordEncoder.encode(password), "email@email.com");
         userRepository.save(user);
     }
 
@@ -52,7 +54,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
         // Making a POST request to the login endpoint with the user credentials
-        MvcResult result = this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") +"\" }").contentType(MediaType.APPLICATION_JSON))
+        MvcResult result = this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") +"\", \"email\": \"email@email.com\" }").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -89,7 +91,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
     public void i_want_to_login_onto_the_test_user_account_with_pAssword_1_as_the_password(String username, String password) {
         // Arrange
         // Creating a user and saving it to the database
-        User user = new User(username, argon2PasswordEncoder.encode(password));
+        User user = new User(username, argon2PasswordEncoder.encode(password), "email@email.com");
         userRepository.save(user);
     }
 
@@ -100,7 +102,7 @@ public class userLoginStepDefinition extends CucumberIntegrationTest {
         List<Map<String, String>> dataList = dataTable.asMaps(String.class, String.class);
 
         // Making a POST request to the login endpoint with the user credentials
-        result = this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") +"\" }").contentType(MediaType.APPLICATION_JSON))
+        result = this.mockMvc.perform(post(endpoint).content("{ \"username\": \"" + dataList.get(0).get("username") + "\", \"password\": \"" + dataList.get(0).get("password") +"\" , \"email\": \"email@email.com\"}").contentType(MediaType.APPLICATION_JSON))
             .andReturn();
     }
 

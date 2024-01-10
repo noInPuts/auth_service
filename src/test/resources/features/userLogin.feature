@@ -7,7 +7,7 @@ Feature: Logging in which returns the user object and a JWT Token
       | test_user | pAssword!1 |
     Then I should receive the user object and JWT:
       | username | password | id | jwt |
-      | test_user | null | 1 | token |
+      | test_user | null | 2 | token |
 
   Scenario: User logging in with incorrect password
     Given I want to make login request, with the following credentials "test_user" "pAssword!1"

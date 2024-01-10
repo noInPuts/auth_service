@@ -1,9 +1,6 @@
 package cphbusiness.noInPuts.authService.controller;
 
-import cphbusiness.noInPuts.authService.dto.UserCreateDTO;
-import cphbusiness.noInPuts.authService.dto.UserDTO;
-import cphbusiness.noInPuts.authService.dto.UserLoginDTO;
-import cphbusiness.noInPuts.authService.dto.UserLogoutDTO;
+import cphbusiness.noInPuts.authService.dto.*;
 import cphbusiness.noInPuts.authService.exception.*;
 import cphbusiness.noInPuts.authService.facade.ServiceFacade;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +32,7 @@ public class UserController {
         UserCreateDTO userCreateDTO;
         try {
             // Creates user and returns userDTO
-            userCreateDTO = serviceFacade.userCreateAccount(POSTuserDTO.getUsername(), POSTuserDTO.getPassword());
+            userCreateDTO = serviceFacade.userCreateAccount(POSTuserDTO.getUsername(), POSTuserDTO.getPassword(), POSTuserDTO.getEmail());
         } catch (UserAlreadyExistsException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (WeakPasswordException e) {
@@ -52,7 +49,7 @@ public class UserController {
     // Endpoint for logging in to a user account
     @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserDTO> login(@Valid @RequestBody UserDTO POSTuserDTO, HttpServletResponse servletResponse, HttpServletRequest servletRequest) {
+    public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginUserDTO POSTuserDTO, HttpServletResponse servletResponse, HttpServletRequest servletRequest) {
 
         boolean blocked = serviceFacade.isClientBlocked(servletRequest);
         if(blocked) {

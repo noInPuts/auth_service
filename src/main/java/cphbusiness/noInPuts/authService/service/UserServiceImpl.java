@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
         this.argon2PasswordEncoder = new Argon2PasswordEncoder(16, 32, 1, 128 * 1024, 5);
     }
 
-    public UserDTO createUser(String username, String password) throws UserAlreadyExistsException, WeakPasswordException {
+    public UserDTO createUser(String username, String password, String email) throws UserAlreadyExistsException, WeakPasswordException {
 
         // Check if user is already registered
         Optional<User> checkIfUserExist = userRepository.findByUsername(username);
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Save the user to the database
-        User user = userRepository.save(new User(username, argon2PasswordEncoder.encode(password)));
+        User user = userRepository.save(new User(username, argon2PasswordEncoder.encode(password), email));
 
         return new UserDTO(user.getId(), user.getUsername());
     }
